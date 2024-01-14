@@ -355,14 +355,14 @@ void nerveBall::BallNetwork::divideBall(Ball* ball, Player* player, sf::RenderWi
     {
         this->removeBall(ball);
         player->setLives(player->getLives() + 1);
-        player->setScore(player->getScore() + (int) (1500/ball->radius));
+        player->score += (int)(3000.0/ball->radius);
         player->updateLifeCount(player, player->getLives(), window);
         player->update();
         player->draw(window);
         
         return;
     }
-    player->setScore(player->getScore() + (int) (1500/ball->radius));
+    player->score += (int)(3000.0/ball->radius);
     sf::Vector2f position = ball->getPosition();
     sf::Vector2f velocity = ball->getVelocity();
     double radius = ball->radius-3;
@@ -482,7 +482,7 @@ int main()
     window.setFramerateLimit(60);
     nerveBall::BallNetwork network = nerveBall::BallNetwork();
     nerveBall::Player *player1 = new nerveBall::Player();
-    for(int i = 0; i < 10; i++)
+    for(int i = 0; i < 4; i++)
     {
         network.addBall(new nerveBall::Ball(sf::Vector2f(nerveBall::helper::random(0, 800), nerveBall::helper::random(0, 600)), sf::Vector2f(nerveBall::helper::random(-5, 5), nerveBall::helper::random(-5, 5)), 15, sf::Color::White));
     }
