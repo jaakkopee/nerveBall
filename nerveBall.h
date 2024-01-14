@@ -3,7 +3,7 @@
     * Nerve Ball is an irritating ball game
     * click on the balls to divide them to smaller balls to get points
     * the smaller the balls are the more points you get
-    * the smallest ball does not divide anymore, instead it disappears and you get points and play time
+    * the smallest ball does not divide anymore when clicked, instead it disappears and you get points and play time
 */
 
 #include <alsa/asoundlib.h>
