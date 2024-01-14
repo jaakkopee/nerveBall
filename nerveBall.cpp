@@ -101,14 +101,13 @@ nerveBall::Ball::Ball(sf::Vector2f position, sf::Vector2f velocity, double radiu
     this->color = color;
     this->direction = 0;
     this->neuralActivation = 0;
-    this->neuralActivationThreshold = 0.3;
-    this->addToNeuralActivation = 0.0000000000001;
+    this->neuralActivationThreshold = 0.8;
+    this->addToNeuralActivation = 0.00001;
     this->shape = sf::CircleShape(this->radius);
 }
 
 double nerveBall::Ball::getNeuralActivation()
 {
-    this->neuralActivation += this->addToNeuralActivation;
     return this->neuralActivation;
 }
 
@@ -124,10 +123,21 @@ void nerveBall::Ball::update()
         this->neuralActivation = 0;
         //this->divide();
     }
+    //max=1.0
+    //min=0.0
+    if (this->neuralActivation < 0)
+    {
+        this->neuralActivation = 0;
+    }
+    if (this->neuralActivation > 1)
+    {
+        this->neuralActivation = 1;
+    }
+    
     double direction = helper::angle(this->velocity);
-    direction += nerveBall::helper::random(-0.1, 0.1);
+    direction += this->neuralActivation;
     double speed = helper::length(this->velocity);
-    speed += nerveBall::helper::random(-0.1, 0.1);
+    speed += this->neuralActivation/100;
     this->velocity = helper::vector(speed, direction);
 
     this->position += this->velocity;
@@ -246,7 +256,7 @@ nerveBall::Connection::Connection(Ball* ball_from, Ball* ball_to, double weight)
 
 void nerveBall::Connection::update()
 {
-    this->ball_to->setNeuralActivation(this->ball_to->neuralActivation + this->ball_from->getNeuralActivation() * this->weight);
+    this->ball_to->neuralActivation += (this->ball_from->neuralActivation+this->ball_from->addToNeuralActivation) * this->weight;
 }
 
 nerveBall::BallNetwork::BallNetwork()
@@ -310,24 +320,23 @@ void nerveBall::BallNetwork::removeBall(Ball* ball)
 
 void nerveBall::BallNetwork::backPropagate()
 {
-    double target = 1.0;
+    double target = 0.01;
     double* activations = new double[this->balls.size()];
-    double learningRate = 0.001;
-    double* errors = new double[this->balls.size()];
+    double learningRate = 0.0001;
     for(int i = 0; i < this->balls.size(); i++)
     {
         activations[i] = this->balls[i]->getNeuralActivation();
     }
     for(int i = 0; i < this->balls.size(); i++)
     {
-        errors[i] = activations[i] * (1 - activations[i]) * (target - activations[i]);
+        double error = target - activations[i];
+        double delta = error * learningRate;
+        for (int j = 0; j < this->balls[i]->connections.size(); j++)
+        {
+            this->balls[i]->connections[j]->weight += delta;
+        }
     }
-    for(int i = 0; i < this->connections.size(); i++)
-    {
-        this->connections[i]->weight += learningRate * errors[i] * activations[i];
-    }
-    delete[] activations; 
-    delete[] errors;
+    delete[] activations;
 
 }
 
@@ -347,7 +356,7 @@ int main()
         {
             if(i != j)
             {
-                network.addConnection(network.balls[i], network.balls[j], 0.01);
+                network.addConnection(network.balls[i], network.balls[j], 0.001);
             }
         }
     }
