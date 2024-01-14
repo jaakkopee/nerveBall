@@ -1,8 +1,9 @@
 /*
-A grey ball that bounces around the screen. if you click on it, it will
-divide into two blue balls, each of which will disappear when clicked after which a red of ball and a grey ball will appear.
-The red ball will try to catch the grey ball. The player can click on the red ball to make it disappear. If the red ball catches the grey ball, the player loses a point.
-The player wins a point if the red ball is clicked before it catches the grey ball.
+    * nerveBall.h
+    * Nerve Ball is an irritating ball game
+    * click on the balls to divide them to smaller balls to get points
+    * the smaller the balls are the more points you get
+    * the smallest ball does not divide anymore, instead it disappears and you get points and play time
 */
 
 #include <alsa/asoundlib.h>
