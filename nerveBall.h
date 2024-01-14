@@ -145,30 +145,37 @@ namespace nerveBall
             double weight;
     };
 
+    class Player;
+
     class BallNetwork{
         public:
             std::vector<Ball*> balls;
             std::vector<Connection*> connections;
             BallNetwork();
+            ~BallNetwork();
             void update();
             void draw(sf::RenderWindow& window);
             Ball* addBall(Ball* ball);
             Connection* addConnection(Ball* ball_from, Ball* ball_to, double weight);
             void removeBall(Ball* ball);
-            void divideBall(Ball* ball);
+            void divideBall(Ball* ball, Player* player, sf::RenderWindow& window);
             void backPropagate();
 
     };
 
     class Player {
+        friend class BallNetwork;
         public:
             Player();
+            ~Player();
             void update();
             void draw(sf::RenderWindow& window);
             void setScore(int score);
             int getScore();
             void setLives(int lives);
             int getLives();
+            void updateLifeCount(Player* player, int lives, sf::RenderWindow& window);
+            
 
         private:
             int score;
@@ -177,6 +184,10 @@ namespace nerveBall
             sf::Text scoreText;
             sf::Text livesText;
     };
+
+    bool gameIsOn;
+    void lifeCountThread(Player* player, sf::RenderWindow& window);
+    void gameOver(Player* player);
 }
  
 

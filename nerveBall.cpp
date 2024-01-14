@@ -1,5 +1,7 @@
 #include "nerveBall.h"
 #include <iostream>
+#include <chrono>
+#include <thread>
 
 int nerveBall::helper::random(int min, int max)
 {
@@ -232,7 +234,7 @@ bool nerveBall::Ball::isClicked(sf::Vector2f mousePosition)
 
 bool nerveBall::Ball::isColliding(Ball& other)
 {
-    return helper::distance(this->position, other.position) < this->radius + other.radius;
+    return helper::distance(this->position, other.position) < this->radius + other.radius + 1;
 }
 
 bool nerveBall::Ball::isColliding(std::vector<Ball>& others)
@@ -319,13 +321,50 @@ void nerveBall::BallNetwork::removeBall(Ball* ball)
     }
 }
 
-void nerveBall::BallNetwork::divideBall(Ball* ball)
+void nerveBall::lifeCountThread(Player* player, sf::RenderWindow& window)
+{
+    while(nerveBall::gameIsOn)
+    {
+        std::this_thread::sleep_for(std::chrono::seconds(60));
+        //decrement the lives of the player
+        player->updateLifeCount(player, player->getLives() - 1, window);
+    }
+}
+
+void nerveBall::Player::updateLifeCount(Player* player, int lives, sf::RenderWindow& window)
+{
+    player->setLives(lives);
+    if (player->getLives() == 0)
+    {
+        nerveBall::gameIsOn = false;
+        nerveBall::gameOver(player);
+    }
+    player->update();
+    player->draw(window);
+}
+
+void nerveBall::gameOver(Player* player)
+{
+    std::cout << "Game Over!" << std::endl;
+    std::cout << "Score: " << player->getScore() << std::endl;
+    exit(0);
+}
+
+
+void nerveBall::BallNetwork::divideBall(Ball* ball, Player* player, sf::RenderWindow& window)
 {
     if (ball->radius < 5)
     {
         this->removeBall(ball);
+        player->setLives(player->getLives() + 1);
+        player->setScore(player->getScore() + (int) (1500/ball->radius));
+        player->updateLifeCount(player, player->getLives(), window);
+        player->update();
+        player->draw(window);
+        
         return;
     }
+    player->setScore(player->getScore() + (int) (1500/ball->radius));
     sf::Vector2f position = ball->getPosition();
     sf::Vector2f velocity = ball->getVelocity();
     double radius = ball->radius-3;
@@ -391,14 +430,52 @@ nerveBall::BallNetwork::~BallNetwork()
 nerveBall::Player::Player()
 {
     this->score = 0;
-    this->lives = 3;
+    this->lives = 5;
     this->font = sf::Font();
     this->font.loadFromFile("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf");
     this->scoreText = sf::Text("Score: " + std::to_string(this->score), this->font, 20);
     this->scoreText.setPosition(10, 10);
-    this->livesText = sf::Text("Lives: " + std::to_string(this->lives), this->font, 20);
+    this->livesText = sf::Text("Time: " + std::to_string(this->lives) + " minutes", this->font, 20);
     this->livesText.setPosition(10, 40);
 }
+
+nerveBall::Player::~Player()
+{
+
+}
+
+void nerveBall::Player::update()
+{
+    this->scoreText.setString("Score: " + std::to_string(this->score));
+    this->livesText.setString("Time: " + std::to_string(this->lives) + " minutes");
+}
+
+void nerveBall::Player::draw(sf::RenderWindow& window)
+{
+    window.draw(this->scoreText);
+    window.draw(this->livesText);
+}
+
+void nerveBall::Player::setScore(int score)
+{
+    this->score = score;
+}
+
+int nerveBall::Player::getScore()
+{
+    return this->score;
+}
+
+void nerveBall::Player::setLives(int lives)
+{
+    this->lives = lives;
+}
+
+int nerveBall::Player::getLives()
+{
+    return this->lives;
+}
+
 
 int main()
 {
@@ -406,6 +483,7 @@ int main()
     sf::RenderWindow window(sf::VideoMode(800, 600), "Nerve Ball");
     window.setFramerateLimit(60);
     nerveBall::BallNetwork network = nerveBall::BallNetwork();
+    nerveBall::Player *player1 = new nerveBall::Player();
     for(int i = 0; i < 10; i++)
     {
         network.addBall(new nerveBall::Ball(sf::Vector2f(nerveBall::helper::random(0, 800), nerveBall::helper::random(0, 600)), sf::Vector2f(nerveBall::helper::random(-5, 5), nerveBall::helper::random(-5, 5)), 15, sf::Color::White));
@@ -420,7 +498,11 @@ int main()
             }
         }
     }
-    while(window.isOpen())
+    nerveBall::gameIsOn = true;
+    std::thread lifeCount(nerveBall::lifeCountThread, player1, std::ref(window));
+    lifeCount.detach();
+
+    while(window.isOpen() && nerveBall::gameIsOn)
     {
         sf::Event event;
         while(window.pollEvent(event))
@@ -437,7 +519,7 @@ int main()
                     {
                         if(network.balls[i]->isClicked(sf::Vector2f(event.mouseButton.x, event.mouseButton.y)))
                         {
-                           network.divideBall(network.balls[i]); 
+                           network.divideBall(network.balls[i], player1, window);
                         }
 
                     }
@@ -476,7 +558,10 @@ int main()
         network.update();
         network.backPropagate();
         network.draw(window);
+        player1->update();
+        player1->draw(window);
         window.display();
     }
+    delete player1;
     return 0;
 }
