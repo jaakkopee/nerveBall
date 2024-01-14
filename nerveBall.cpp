@@ -229,7 +229,7 @@ double nerveBall::Ball::getDirection()
 
 bool nerveBall::Ball::isClicked(sf::Vector2f mousePosition)
 {
-    return helper::distance(this->position, mousePosition) < this->radius + 2;
+    return helper::distance(this->position, mousePosition) < this->radius + 3;
 }
 
 bool nerveBall::Ball::isColliding(Ball& other)
