@@ -152,11 +152,31 @@ namespace nerveBall
             BallNetwork();
             void update();
             void draw(sf::RenderWindow& window);
-            void addBall(Ball* ball);
+            Ball* addBall(Ball* ball);
             Connection* addConnection(Ball* ball_from, Ball* ball_to, double weight);
             void removeBall(Ball* ball);
+            void divideBall(Ball* ball);
             void backPropagate();
 
     };
+
+    class Player {
+        public:
+            Player();
+            void update();
+            void draw(sf::RenderWindow& window);
+            void setScore(int score);
+            int getScore();
+            void setLives(int lives);
+            int getLives();
+
+        private:
+            int score;
+            int lives;
+            sf::Font font;
+            sf::Text scoreText;
+            sf::Text livesText;
+    };
 }
+ 
 

@@ -133,7 +133,7 @@ void nerveBall::Ball::update()
     {
         this->neuralActivation = 1;
     }
-    
+
     double direction = helper::angle(this->velocity);
     direction += this->neuralActivation;
     double speed = helper::length(this->velocity);
@@ -285,9 +285,10 @@ void nerveBall::BallNetwork::draw(sf::RenderWindow& window)
     }
 }
 
-void nerveBall::BallNetwork::addBall(Ball* ball)
+nerveBall::Ball* nerveBall::BallNetwork::addBall(Ball* ball)
 {
     this->balls.push_back(ball);
+    return this->balls.back();
 }
 
 nerveBall::Connection* nerveBall::BallNetwork::addConnection(Ball* ball_from, Ball* ball_to, double weight)
@@ -318,6 +319,41 @@ void nerveBall::BallNetwork::removeBall(Ball* ball)
     }
 }
 
+void nerveBall::BallNetwork::divideBall(Ball* ball)
+{
+    if (ball->radius < 5)
+    {
+        this->removeBall(ball);
+        return;
+    }
+    sf::Vector2f position = ball->getPosition();
+    sf::Vector2f velocity = ball->getVelocity();
+    double radius = ball->radius-3;
+    sf::Color color = ball->getColor();
+    color.r -= 50;
+    color.g -= 50;
+    this->removeBall(ball);
+    nerveBall::Ball* newball1 = this->addBall(new Ball(position, velocity, radius, color));
+    nerveBall::Ball* newball2 = this->addBall(new Ball(position, velocity, radius, color));
+    //connect the new balls to the old balls
+    //first ball
+    for(int i = 0; i < this->balls.size(); i++)
+    {
+        if(this->balls[i] != newball1)
+        {
+            this->addConnection(this->balls[i], newball1, 0.001);
+        }
+    }
+    //second ball
+    for(int i = 0; i < this->balls.size(); i++)
+    {
+        if(this->balls[i] != newball2)
+        {
+            this->addConnection(this->balls[i], newball2, 0.001);
+        }
+    }
+}
+
 void nerveBall::BallNetwork::backPropagate()
 {
     double target = 0.01;
@@ -340,6 +376,30 @@ void nerveBall::BallNetwork::backPropagate()
 
 }
 
+nerveBall::BallNetwork::~BallNetwork()
+{
+    for(int i = 0; i < this->balls.size(); i++)
+    {
+        delete this->balls[i];
+    }
+    for(int i = 0; i < this->connections.size(); i++)
+    {
+        delete this->connections[i];
+    }
+}
+
+nerveBall::Player::Player()
+{
+    this->score = 0;
+    this->lives = 3;
+    this->font = sf::Font();
+    this->font.loadFromFile("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf");
+    this->scoreText = sf::Text("Score: " + std::to_string(this->score), this->font, 20);
+    this->scoreText.setPosition(10, 10);
+    this->livesText = sf::Text("Lives: " + std::to_string(this->lives), this->font, 20);
+    this->livesText.setPosition(10, 40);
+}
+
 int main()
 {
     srand(time(NULL));
@@ -348,7 +408,7 @@ int main()
     nerveBall::BallNetwork network = nerveBall::BallNetwork();
     for(int i = 0; i < 10; i++)
     {
-        network.addBall(new nerveBall::Ball(sf::Vector2f(nerveBall::helper::random(0, 800), nerveBall::helper::random(0, 600)), sf::Vector2f(nerveBall::helper::random(-5, 5), nerveBall::helper::random(-5, 5)), 10, sf::Color::White));
+        network.addBall(new nerveBall::Ball(sf::Vector2f(nerveBall::helper::random(0, 800), nerveBall::helper::random(0, 600)), sf::Vector2f(nerveBall::helper::random(-5, 5), nerveBall::helper::random(-5, 5)), 15, sf::Color::White));
     }
     for(int i = 0; i < network.balls.size(); i++)
     {
@@ -377,18 +437,11 @@ int main()
                     {
                         if(network.balls[i]->isClicked(sf::Vector2f(event.mouseButton.x, event.mouseButton.y)))
                         {
-                            network.removeBall(network.balls[i]);
-                            network.addBall(new nerveBall::Ball(sf::Vector2f(event.mouseButton.x, event.mouseButton.y), sf::Vector2f(nerveBall::helper::random(-5, 5), nerveBall::helper::random(-5, 5)), 5, sf::Color::Blue));
-                            for (int j = 0; j < network.balls.size(); j++)
-                            {
-                                if (i != j)
-                                {
-                                    network.addConnection(network.balls[i], network.balls[j], 0.01);
-                                }
-                            }
-
+                           network.divideBall(network.balls[i]); 
                         }
+
                     }
+                    
                 }
             }
         }
