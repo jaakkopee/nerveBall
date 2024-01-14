@@ -119,14 +119,17 @@ void nerveBall::Ball::setNeuralActivation(double neuralActivation)
 
 void nerveBall::Ball::update()
 {
-    this->neuralActivation += this->addToNeuralActivation;
     if(this->neuralActivation > this->neuralActivationThreshold)
     {
         this->neuralActivation = 0;
         //this->divide();
     }
-    this->direction = helper::angle(this->velocity) + this->neuralActivation * M_PI;
-    this->velocity = sf::Vector2f(this->velocity.x/1024 + cos(this->direction), this->velocity.y/1024 + sin(this->direction));
+    double direction = helper::angle(this->velocity);
+    direction += nerveBall::helper::random(-0.1, 0.1);
+    double speed = helper::length(this->velocity);
+    speed += nerveBall::helper::random(-0.1, 0.1);
+    this->velocity = helper::vector(speed, direction);
+
     this->position += this->velocity;
     if(this->position.x < 0)
     {
@@ -243,7 +246,7 @@ nerveBall::Connection::Connection(Ball* ball_from, Ball* ball_to, double weight)
 
 void nerveBall::Connection::update()
 {
-    this->ball_to->setNeuralActivation(this->ball_from->getNeuralActivation() * this->weight);
+    this->ball_to->setNeuralActivation(this->ball_to->neuralActivation + this->ball_from->getNeuralActivation() * this->weight);
 }
 
 nerveBall::BallNetwork::BallNetwork()
@@ -307,7 +310,7 @@ void nerveBall::BallNetwork::removeBall(Ball* ball)
 
 void nerveBall::BallNetwork::backPropagate()
 {
-    double target = 0.29;
+    double target = 1.0;
     double* activations = new double[this->balls.size()];
     double learningRate = 0.001;
     double* errors = new double[this->balls.size()];
