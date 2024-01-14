@@ -336,18 +336,16 @@ void nerveBall::Player::updateLifeCount(Player* player, int lives, sf::RenderWin
     player->setLives(lives);
     if (player->getLives() == 0)
     {
-        nerveBall::gameIsOn = false;
-        nerveBall::gameOver(player);
+        nerveBall::gameOver(player, window);
+        return;
     }
     player->update();
     player->draw(window);
 }
 
-void nerveBall::gameOver(Player* player)
+void nerveBall::gameOver(Player* player, sf::RenderWindow& window)
 {
-    std::cout << "Game Over!" << std::endl;
-    std::cout << "Score: " << player->getScore() << std::endl;
-    exit(0);
+    nerveBall::gameIsOn = false;
 }
 
 
@@ -502,8 +500,25 @@ int main()
     std::thread lifeCount(nerveBall::lifeCountThread, player1, std::ref(window));
     lifeCount.detach();
 
-    while(window.isOpen() && nerveBall::gameIsOn)
+    while(window.isOpen())
     {
+        if (nerveBall::gameIsOn == false)
+        {
+            sf::Font font;
+            font.loadFromFile("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf");
+            sf::Text gameOverText = sf::Text("Game Over", font, 50);
+            sf::Text scoreText = sf::Text("Score: " + std::to_string(player1->getScore()), font, 30);
+            gameOverText.setPosition(200, 200);
+            scoreText.setPosition(200, 300);
+            window.clear();
+            window.draw(gameOverText);
+            window.draw(scoreText);
+            window.display();
+            std::this_thread::sleep_for(std::chrono::seconds(5));
+            window.close();
+            exit(0);
+        }
+
         sf::Event event;
         while(window.pollEvent(event))
         {
