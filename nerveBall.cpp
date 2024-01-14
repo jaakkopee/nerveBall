@@ -482,7 +482,7 @@ int main()
     window.setFramerateLimit(60);
     nerveBall::BallNetwork network = nerveBall::BallNetwork();
     nerveBall::Player *player1 = new nerveBall::Player();
-    for(int i = 0; i < 2; i++)
+    for(int i = 0; i < 3; i++)
     {
         network.addBall(new nerveBall::Ball(sf::Vector2f(nerveBall::helper::random(0, 800), nerveBall::helper::random(0, 600)), sf::Vector2f(nerveBall::helper::random(-5, 5), nerveBall::helper::random(-5, 5)), 15, sf::Color::White));
     }
