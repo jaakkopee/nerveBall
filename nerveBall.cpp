@@ -357,12 +357,14 @@ void nerveBall::BallNetwork::divideBall(Ball* ball, Player* player, sf::RenderWi
         player->setLives(player->getLives() + 1);
         player->score += (int)(3000.0/ball->radius);
         player->updateLifeCount(player, player->getLives(), window);
-        player->update();
-        player->draw(window);
         
         return;
     }
+    
     player->score += (int)(3000.0/ball->radius);
+    player->update();
+    player->draw(window);
+
     sf::Vector2f position = ball->getPosition();
     sf::Vector2f velocity = ball->getVelocity();
     double radius = ball->radius-3;
