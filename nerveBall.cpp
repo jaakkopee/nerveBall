@@ -121,7 +121,7 @@ void nerveBall::Ball::setNeuralActivation(double neuralActivation)
 
 void nerveBall::Ball::update()
 {
-    //this->neuralActivation += this->addToNeuralActivation;
+
     if(this->neuralActivation > this->neuralActivationThreshold)
     {
         this->neuralActivation = 0;
