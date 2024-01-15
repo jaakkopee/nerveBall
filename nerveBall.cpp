@@ -140,7 +140,7 @@ void nerveBall::Ball::update()
     double direction = helper::angle(this->velocity);
     direction += this->neuralActivation;
     double speed = helper::length(this->velocity);
-    speed += this->neuralActivation/100;
+    speed += this->neuralActivation/200;
     this->velocity = helper::vector(speed, direction);
 
     this->position += this->velocity;
