@@ -381,6 +381,7 @@ void nerveBall::BallNetwork::divideBall(Ball* ball, Player* player, sf::RenderWi
         if(this->balls[i] != newball1)
         {
             this->addConnection(this->balls[i], newball1, 0.001);
+            this->addConnection(newball1, this->balls[i], 0.001);
         }
     }
     //second ball
@@ -389,6 +390,7 @@ void nerveBall::BallNetwork::divideBall(Ball* ball, Player* player, sf::RenderWi
         if(this->balls[i] != newball2)
         {
             this->addConnection(this->balls[i], newball2, 0.001);
+            this->addConnection(newball2, this->balls[i], 0.001);
         }
     }
     //connect the new balls to each other
