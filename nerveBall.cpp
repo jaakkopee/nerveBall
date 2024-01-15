@@ -314,6 +314,14 @@ nerveBall::Connection* nerveBall::BallNetwork::addConnection(Ball* ball_from, Ba
 
 void nerveBall::BallNetwork::removeBall(Ball* ball) //TODO: remove connections
 {
+    //handle last ball
+    if (this->balls.size() == 1)
+    {
+        this->balls.erase(this->balls.begin());
+        nerveBall::gameOver();
+        return;
+    }
+
     for(int i = 0; i < this->balls.size(); i++)
     {
         if(this->balls[i] == ball)
@@ -347,14 +355,14 @@ void nerveBall::Player::updateLifeCount(Player* player, int lives, sf::RenderWin
     player->setLives(lives);
     if (player->getLives() == 0)
     {
-        nerveBall::gameOver(player, window);
+        nerveBall::gameOver();
         return;
     }
     player->update();
     player->draw(window);
 }
 
-void nerveBall::gameOver(Player* player, sf::RenderWindow& window)
+void nerveBall::gameOver()
 {
     nerveBall::gameIsOn = false;
 }
