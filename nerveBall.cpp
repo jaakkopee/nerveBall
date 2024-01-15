@@ -256,6 +256,11 @@ nerveBall::Connection::Connection(Ball* ball_from, Ball* ball_to, double weight)
     this->weight = weight;
 }
 
+nerveBall::Connection::~Connection()
+{
+
+}
+
 void nerveBall::Connection::update()
 {
     this->ball_to->neuralActivation += this->ball_from->addToNeuralActivation * this->weight;
