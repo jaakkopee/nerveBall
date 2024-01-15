@@ -564,6 +564,7 @@ int main()
             window.draw(gameOverText);
             window.draw(scoreText);
             window.draw(minusScoreText);
+            window.draw(timeBonusText);
             window.draw(totalScoreText);
             window.display();
 
