@@ -239,7 +239,7 @@ double nerveBall::Ball::getRadius()
 
 bool nerveBall::Ball::isClicked(sf::Vector2f mousePosition)
 {
-    return helper::distance(this->position, mousePosition) < this->radius + 3;
+    return helper::distance(this->position, mousePosition) < this->radius + 4;
 }
 
 bool nerveBall::Ball::isColliding(Ball& other)
@@ -542,25 +542,31 @@ int main()
             {
                 minusScore+=3000.0/network.balls[i]->getRadius();
             }
-            int totalScore = player1->getScore() - (int)minusScore;
+            double timeBonus = player1->getLives() * 100;
+            int totalScore = player1->getScore() - (int)minusScore + (int)timeBonus;
 
             sf::Font font;
             font.loadFromFile("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf");
             sf::Text gameOverText = sf::Text("Game Over", font, 50);
             sf::Text scoreText = sf::Text("Score: " + std::to_string(player1->getScore()), font, 30);
-            sf::Text minusScoreText = sf::Text("Minus: " + std::to_string((int)minusScore), font, 30);
+            sf::Text minusScoreText = sf::Text("Ball penalty: " + std::to_string((int)minusScore), font, 30);
+            sf::Text timeBonusText = sf::Text("Time bonus: " + std::to_string((int)timeBonus), font, 30);
             sf::Text totalScoreText = sf::Text("Total: " + std::to_string(totalScore), font, 30);
 
-            gameOverText.setPosition(200, 200);
-            scoreText.setPosition(200, 300);
-            minusScoreText.setPosition(200, 350);
-            totalScoreText.setPosition(200, 400);
+
+            gameOverText.setPosition(300, 200);
+            scoreText.setPosition(300, 300);
+            minusScoreText.setPosition(300, 330);
+            timeBonusText.setPosition(300, 360);
+            totalScoreText.setPosition(300, 390);
+
             window.clear();
             window.draw(gameOverText);
             window.draw(scoreText);
             window.draw(minusScoreText);
             window.draw(totalScoreText);
             window.display();
+
             std::this_thread::sleep_for(std::chrono::seconds(15));
             window.close();
             exit(0);
