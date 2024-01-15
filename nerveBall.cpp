@@ -105,7 +105,7 @@ nerveBall::Ball::Ball(sf::Vector2f position, sf::Vector2f velocity, double radiu
     this->direction = 0;
     this->neuralActivation = 0;
     this->neuralActivationThreshold = 0.9;
-    this->addToNeuralActivation = 0.0005;
+    this->addToNeuralActivation = 0.000001;
     this->shape = sf::CircleShape(this->radius);
 }
 
@@ -121,6 +121,7 @@ void nerveBall::Ball::setNeuralActivation(double neuralActivation)
 
 void nerveBall::Ball::update()
 {
+    //this->neuralActivation += this->addToNeuralActivation;
     if(this->neuralActivation > this->neuralActivationThreshold)
     {
         this->neuralActivation = 0;
@@ -142,7 +143,7 @@ void nerveBall::Ball::update()
     }
 
     double direction = helper::angle(this->velocity);
-    direction += this->neuralActivation;
+    direction += this->neuralActivation*1.6;
     double speed = helper::length(this->velocity);
     speed += this->neuralActivation/200;
     this->velocity = helper::vector(speed, direction);
@@ -273,7 +274,7 @@ nerveBall::Connection::~Connection()
 
 void nerveBall::Connection::update()
 {
-    this->ball_to->neuralActivation += this->ball_from->addToNeuralActivation * this->weight;
+    this->ball_to->neuralActivation += this->ball_from->neuralActivation * this->weight;
 }
 
 nerveBall::BallNetwork::BallNetwork()
