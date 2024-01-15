@@ -405,7 +405,7 @@ void nerveBall::BallNetwork::divideBall(Ball* ball, Player* player, sf::RenderWi
         if(this->balls[i] != newball1)
         {
             this->addConnection(this->balls[i], newball1, 0.001);
-            this->addConnection(newball1, this->balls[i], 0.001);
+            this->addConnection(newball1, this->balls[i], -0.001);
         }
     }
     //second ball
@@ -414,19 +414,19 @@ void nerveBall::BallNetwork::divideBall(Ball* ball, Player* player, sf::RenderWi
         if(this->balls[i] != newball2)
         {
             this->addConnection(this->balls[i], newball2, 0.001);
-            this->addConnection(newball2, this->balls[i], 0.001);
+            this->addConnection(newball2, this->balls[i], -0.001);
         }
     }
     //connect the new balls to each other
     this->addConnection(newball1, newball2, 0.001);
-    this->addConnection(newball2, newball1, 0.001);
+    this->addConnection(newball2, newball1, -0.001);
 }
 
 void nerveBall::BallNetwork::backPropagate()
 {
-    double target = 0.0;
+    double target = -0.3;
     double* activations = new double[this->balls.size()];
-    double learningRate = 0.0015;
+    double learningRate = 0.0006;
     for(int i = 0; i < this->balls.size(); i++)
     {
         activations[i] = this->balls[i]->getNeuralActivation();
@@ -442,6 +442,14 @@ void nerveBall::BallNetwork::backPropagate()
     }
     delete[] activations;
 
+}
+
+void nerveBall::BallNetwork::setWeigths(double weight)
+{
+    for(int i = 0; i < this->connections.size(); i++)
+    {
+        this->connections[i]->weight = weight;
+    }
 }
 
 nerveBall::BallNetwork::~BallNetwork()
@@ -476,7 +484,7 @@ nerveBall::Player::~Player()
 void nerveBall::Player::update()
 {
     this->scoreText.setString("Score: " + std::to_string(this->score));
-    this->livesText.setString("Time: " + std::to_string(this->lives) + " minutes");
+    this->livesText.setString("Time: " + std::to_string(this->lives) + " min");
 }
 
 void nerveBall::Player::draw(sf::RenderWindow& window)
@@ -524,7 +532,7 @@ int main()
             if(i != j)
             {
                 network.addConnection(network.balls[i], network.balls[j], 0.001);
-                network.addConnection(network.balls[j], network.balls[i], 0.001);
+                network.addConnection(network.balls[j], network.balls[i], -0.001);
             }
         }
     }
@@ -605,7 +613,21 @@ int main()
                     
                 }
             }
+            if (event.type == sf::Event::KeyPressed)
+            {
+                if (event.key.code == sf::Keyboard::Space)
+                {
+                    network.setWeigths(1);
+                    std::cout << "Weights set to 1" << std::endl;
+                }
+                if (event.key.code == sf::Keyboard::Return)
+                {
+                    network.setWeigths(-1);
+                    std::cout << "Weights set to -1" << std::endl;
+                }
+            }
         }
+
         //check for collisions
         for(int i = 0; i < network.balls.size(); i++)
         {

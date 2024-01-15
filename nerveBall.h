@@ -164,6 +164,7 @@ namespace nerveBall
             void removeBall(Ball* ball);
             void divideBall(Ball* ball, Player* player, sf::RenderWindow& window);
             void backPropagate();
+            void setWeigths(double weight);
 
     };
 
