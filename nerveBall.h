@@ -137,6 +137,7 @@ namespace nerveBall
         public:
 
             Connection(Ball* ball_from, Ball* ball_to, double weight);
+            ~Connection();
 
             void update();
 
@@ -158,6 +159,7 @@ namespace nerveBall
             void draw(sf::RenderWindow& window);
             Ball* addBall(Ball* ball);
             Connection* addConnection(Ball* ball_from, Ball* ball_to, double weight);
+            void removeConnection(Connection* connection);
             void removeBall(Ball* ball);
             void divideBall(Ball* ball, Player* player, sf::RenderWindow& window);
             void backPropagate();
