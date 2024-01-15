@@ -320,7 +320,7 @@ nerveBall::Connection* nerveBall::BallNetwork::addConnection(Ball* ball_from, Ba
 void nerveBall::BallNetwork::removeBall(Ball* ball) //TODO: remove connections
 {
     //handle last ball
-    if (this->balls.size() == 1)
+    if (this->balls.size() == 1 && this->balls[0]->radius < 5)
     {
         this->balls.erase(this->balls.begin());
         nerveBall::gameOver();
