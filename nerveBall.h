@@ -112,6 +112,7 @@ namespace nerveBall
             sf::Vector2f getPosition();
             sf::Vector2f getVelocity();
             sf::Color getColor();
+            double getRadius();
             void setDirection(double direction);
             double getDirection();
             bool isClicked(sf::Vector2f mousePosition);
