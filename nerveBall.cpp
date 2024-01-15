@@ -567,10 +567,19 @@ int main()
             window.draw(timeBonusText);
             window.draw(totalScoreText);
             window.display();
-
-            std::this_thread::sleep_for(std::chrono::seconds(15));
-            window.close();
-            exit(0);
+            while (window.isOpen())
+            {
+                sf::Event event;
+                while(window.pollEvent(event))
+                {
+                    if(event.type == sf::Event::Closed)
+                    {
+                        window.close();
+                        exit(0);
+                    }
+                }
+            }
+            
         }
 
         sf::Event event;
