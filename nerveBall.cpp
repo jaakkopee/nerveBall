@@ -3,6 +3,7 @@
 #include <chrono>
 #include <thread>
 
+
 int nerveBall::helper::random(int min, int max)
 {
     return rand() % (max - min + 1) + min;
