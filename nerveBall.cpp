@@ -301,7 +301,7 @@ nerveBall::Connection* nerveBall::BallNetwork::addConnection(Ball* ball_from, Ba
     return this->connections.back();
 }
 
-void nerveBall::BallNetwork::removeBall(Ball* ball)
+void nerveBall::BallNetwork::removeBall(Ball* ball) //TODO: remove connections
 {
     for(int i = 0; i < this->balls.size(); i++)
     {
