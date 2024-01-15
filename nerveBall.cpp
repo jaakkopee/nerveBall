@@ -143,7 +143,7 @@ void nerveBall::Ball::update()
     }
 
     double direction = helper::angle(this->velocity);
-    direction += this->neuralActivation*1.6;
+    direction += this->neuralActivation*2*M_PI;
     double speed = helper::length(this->velocity);
     speed += this->neuralActivation/200;
     this->velocity = helper::vector(speed, direction);
@@ -461,7 +461,7 @@ nerveBall::Player::Player()
     this->score = 0;
     this->lives = 5;
     this->font = sf::Font();
-    this->font.loadFromFile("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf");
+    this->font.loadFromFile("/home/jaakko/Koodit/funk_fonts/shagade.ttf");
     this->scoreText = sf::Text("Score: " + std::to_string(this->score), this->font, 20);
     this->scoreText.setPosition(10, 10);
     this->livesText = sf::Text("Time: " + std::to_string(this->lives) + " minutes", this->font, 20);
@@ -547,7 +547,7 @@ int main()
             int totalScore = player1->getScore() - (int)minusScore + (int)timeBonus;
 
             sf::Font font;
-            font.loadFromFile("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf");
+            font.loadFromFile("/home/jaakko/Koodit/funk_fonts/shagade.ttf");
             sf::Text gameOverText = sf::Text("Game Over", font, 50);
             sf::Text scoreText = sf::Text("Score: " + std::to_string(player1->getScore()), font, 30);
             sf::Text minusScoreText = sf::Text("Ball penalty: " + std::to_string((int)minusScore), font, 30);
