@@ -126,11 +126,15 @@ void nerveBall::Ball::update()
         this->neuralActivation = 0;
         //this->divide();
     }
-    //max=1.0
-    //min=0.0
-    if (this->neuralActivation < 0)
+    if (this->neuralActivation < -this->neuralActivationThreshold)
     {
         this->neuralActivation = 0;
+    }
+    //max=1.0
+    //min=0.0
+    if (this->neuralActivation < -1)
+    {
+        this->neuralActivation = -1;
     }
     if (this->neuralActivation > 1)
     {
@@ -419,7 +423,7 @@ void nerveBall::BallNetwork::divideBall(Ball* ball, Player* player, sf::RenderWi
 
 void nerveBall::BallNetwork::backPropagate()
 {
-    double target = 0.01;
+    double target = 0.0;
     double* activations = new double[this->balls.size()];
     double learningRate = 0.0002;
     for(int i = 0; i < this->balls.size(); i++)
