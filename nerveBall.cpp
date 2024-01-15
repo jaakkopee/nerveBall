@@ -104,7 +104,7 @@ nerveBall::Ball::Ball(sf::Vector2f position, sf::Vector2f velocity, double radiu
     this->color = color;
     this->direction = 0;
     this->neuralActivation = 0;
-    this->neuralActivationThreshold = 0.8;
+    this->neuralActivationThreshold = 0.9;
     this->addToNeuralActivation = 0.0001;
     this->shape = sf::CircleShape(this->radius);
 }
@@ -406,7 +406,7 @@ void nerveBall::BallNetwork::divideBall(Ball* ball, Player* player, sf::RenderWi
 
 void nerveBall::BallNetwork::backPropagate()
 {
-    double target = 0.001;
+    double target = 0.006;
     double* activations = new double[this->balls.size()];
     double learningRate = 0.0001;
     for(int i = 0; i < this->balls.size(); i++)
