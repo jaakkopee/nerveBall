@@ -103,9 +103,9 @@ nerveBall::Ball::Ball(sf::Vector2f position, sf::Vector2f velocity, double radiu
     this->radius = radius;
     this->color = color;
     this->direction = 0;
-    this->neuralActivation = 0;
-    this->neuralActivationThreshold = 0.9;
-    this->addToNeuralActivation = 0.000002;
+    this->neuralActivation = 0.2;
+    this->neuralActivationThreshold = 0.3;
+    this->addToNeuralActivation = 0.0002;
     this->shape = sf::CircleShape(this->radius);
 }
 
@@ -147,10 +147,10 @@ void nerveBall::Ball::update()
     {
         if (this->connections[i]->ball_to == this){
             activation += this->connections[i]->getNeuralActivation();
+            activation += this->addToNeuralActivation;
         }
 
     }
-    activation += this->addToNeuralActivation;
     activation = nerveBall::scaleActivationSigmoid(activation);
     this->neuralActivation += activation;
     std::cout << this->neuralActivation << std::endl;
@@ -165,13 +165,9 @@ void nerveBall::Ball::update()
     }*/
     //max=1.0
     //min=-1.0
-    if (this->neuralActivation < -1)
+    if (this->neuralActivation < this->neuralActivationThreshold && this->neuralActivation > -this->neuralActivationThreshold)
     {
-        this->neuralActivation = -1;
-    }
-    if (this->neuralActivation > 1)
-    {
-        this->neuralActivation = 1;
+        this->neuralActivation = 0;
     }
     
 
@@ -460,7 +456,7 @@ void nerveBall::BallNetwork::backPropagate()
 {
     double target = 0.0;
     double* activations = new double[this->balls.size()];
-    double learningRate = 0.06;
+    double learningRate = 0.007;
     for(int i = 0; i < this->balls.size(); i++)
     {
         activations[i] = this->balls[i]->getNeuralActivation();
