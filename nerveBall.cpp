@@ -154,6 +154,7 @@ void nerveBall::Ball::update()
     activation = nerveBall::scaleActivationSigmoid(activation);
     this->neuralActivation += activation;
     std::cout << this->neuralActivation << std::endl;
+    /*
     if(this->neuralActivation > this->neuralActivationThreshold)
     {
         this->neuralActivation = 0;
@@ -161,7 +162,7 @@ void nerveBall::Ball::update()
     if (this->neuralActivation < -this->neuralActivationThreshold)
     {
         this->neuralActivation = 0;
-    }
+    }*/
     //max=1.0
     //min=-1.0
     if (this->neuralActivation < -1)
@@ -172,6 +173,7 @@ void nerveBall::Ball::update()
     {
         this->neuralActivation = 1;
     }
+    
 
     double direction = helper::angle(this->velocity);
     direction += this->neuralActivation*2*M_PI;
@@ -456,9 +458,9 @@ void nerveBall::BallNetwork::divideBall(Ball* ball, Player* player, sf::RenderWi
 
 void nerveBall::BallNetwork::backPropagate()
 {
-    double target = -0.3;
+    double target = 0.0;
     double* activations = new double[this->balls.size()];
-    double learningRate = 0.0006;
+    double learningRate = 0.06;
     for(int i = 0; i < this->balls.size(); i++)
     {
         activations[i] = this->balls[i]->getNeuralActivation();
