@@ -153,7 +153,7 @@ void nerveBall::Ball::update()
     }
     activation = nerveBall::scaleActivationSigmoid(activation);
     this->neuralActivation += activation;
-    std::cout << this->neuralActivation << std::endl;
+    //std::cout << this->neuralActivation << std::endl;
     /*
     if(this->neuralActivation > this->neuralActivationThreshold)
     {
@@ -172,7 +172,7 @@ void nerveBall::Ball::update()
     
 
     double direction = helper::angle(this->velocity);
-    direction += this->neuralActivation/100;
+    direction += this->neuralActivation/80;
     double speed = helper::length(this->velocity);
     speed += this->neuralActivation/200;
     this->velocity = helper::vector(speed, direction);
