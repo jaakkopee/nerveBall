@@ -662,57 +662,57 @@ int main()
                 {
                     temp = 0;
                 }
-                minusScoreColor.r = temp + 1;
+                minusScoreColor.r = temp + 4;
                 temp = minusScoreColor.g;
                 if (temp == 255)
                 {
                     temp = 0;
                 }
-                minusScoreColor.g = temp + 3;
+                minusScoreColor.g = temp + 8;
                 temp = minusScoreColor.b;
                 if (temp == 255)
                 {
                     temp = 0;
                 }
-                minusScoreColor.b = temp + 5;
+                minusScoreColor.b = temp + 16;
 
                 temp = timeBonusColor.r;
                 if (temp == 255)
                 {
                     temp = 0;
                 }
-                timeBonusColor.r = temp + 3;
+                timeBonusColor.r = temp + 8;
                 temp = timeBonusColor.g;
                 if (temp == 255)
                 {
                     temp = 0;
                 }
-                timeBonusColor.g = temp + 5;
+                timeBonusColor.g = temp + 16;
                 temp = timeBonusColor.b;
                 if (temp == 255)
                 {
                     temp = 0;
                 }
-                timeBonusColor.b = temp + 7;
+                timeBonusColor.b = temp + 32;
 
                 temp = totalScoreColor.r;
                 if (temp == 255)
                 {
                     temp = 0;
                 }
-                totalScoreColor.r = temp + 2;
+                totalScoreColor.r = temp + 16;
                 temp = totalScoreColor.g;
                 if (temp == 255)
                 {
                     temp = 0;
                 }
-                totalScoreColor.g = temp + 4;
+                totalScoreColor.g = temp + 32;
                 temp = totalScoreColor.b;
                 if (temp == 255)
                 {
                     temp = 0;
                 }
-                totalScoreColor.b = temp + 6;
+                totalScoreColor.b = temp + 64;
 
                 gameOverText.setFillColor(gameOverColor);
                 scoreText.setFillColor(scoreColor);
