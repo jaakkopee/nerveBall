@@ -104,8 +104,8 @@ nerveBall::Ball::Ball(sf::Vector2f position, sf::Vector2f velocity, double radiu
     this->color = color;
     this->direction = 0;
     this->neuralActivation = 0;
-    this->neuralActivationThreshold = 0.5;
-    this->addToNeuralActivation = 0.005;
+    this->neuralActivationThreshold = 0.9;
+    this->addToNeuralActivation = 0.000002;
     this->shape = sf::CircleShape(this->radius);
 }
 
@@ -134,22 +134,36 @@ double nerveBall::scaleActivation(double activation)
     return activation;
 }
 
+double nerveBall::scaleActivationSigmoid(double activation)
+{
+    return (2.0/(1+exp(-activation)))-1.0;
+}
+
 
 void nerveBall::Ball::update()
 {
-    this->neuralActivation += this->addToNeuralActivation;
-    this->neuralActivation = nerveBall::scaleActivation(this->neuralActivation);
+    double activation = 0;
+    for(int i = 0; i < this->connections.size(); i++)
+    {
+        if (this->connections[i]->ball_to == this){
+            activation += this->connections[i]->getNeuralActivation();
+        }
+
+    }
+    activation += this->addToNeuralActivation;
+    activation = nerveBall::scaleActivationSigmoid(activation);
+    this->neuralActivation += activation;
+    std::cout << this->neuralActivation << std::endl;
     if(this->neuralActivation > this->neuralActivationThreshold)
     {
         this->neuralActivation = 0;
-        //this->divide();
     }
     if (this->neuralActivation < -this->neuralActivationThreshold)
     {
         this->neuralActivation = 0;
     }
     //max=1.0
-    //min=0.0
+    //min=-1.0
     if (this->neuralActivation < -1)
     {
         this->neuralActivation = -1;
@@ -294,6 +308,11 @@ void nerveBall::Connection::update()
     this->ball_to->neuralActivation += this->ball_from->neuralActivation * this->weight;
 }
 
+double nerveBall::Connection::getNeuralActivation()
+{
+    return this->ball_from->neuralActivation * this->weight;
+}
+
 nerveBall::BallNetwork::BallNetwork()
 {
     this->balls = std::vector<Ball*>();
@@ -302,10 +321,6 @@ nerveBall::BallNetwork::BallNetwork()
 
 void nerveBall::BallNetwork::update()
 {
-    for(int i = 0; i < this->connections.size(); i++)
-    {
-        this->connections[i]->update();
-    }
     for(int i = 0; i < this->balls.size(); i++)
     {
         this->balls[i]->update();
@@ -422,7 +437,7 @@ void nerveBall::BallNetwork::divideBall(Ball* ball, Player* player, sf::RenderWi
         if(this->balls[i] != newball1)
         {
             this->addConnection(this->balls[i], newball1, 0.001);
-            this->addConnection(newball1, this->balls[i], -0.001);
+            //this->addConnection(newball1, this->balls[i], -0.001);
         }
     }
     //second ball
@@ -431,12 +446,12 @@ void nerveBall::BallNetwork::divideBall(Ball* ball, Player* player, sf::RenderWi
         if(this->balls[i] != newball2)
         {
             this->addConnection(this->balls[i], newball2, 0.001);
-            this->addConnection(newball2, this->balls[i], -0.001);
+            //this->addConnection(newball2, this->balls[i], -0.001);
         }
     }
     //connect the new balls to each other
     this->addConnection(newball1, newball2, 0.001);
-    this->addConnection(newball2, newball1, -0.001);
+    //this->addConnection(newball2, newball1, -0.001);
 }
 
 void nerveBall::BallNetwork::backPropagate()
@@ -549,7 +564,7 @@ int main()
             if(i != j)
             {
                 network.addConnection(network.balls[i], network.balls[j], 0.001);
-                network.addConnection(network.balls[j], network.balls[i], -0.001);
+                //network.addConnection(network.balls[j], network.balls[i], -0.001);
             }
         }
     }

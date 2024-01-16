@@ -135,12 +135,14 @@ namespace nerveBall
 
     class Connection {
         friend class BallNetwork;
+        friend class Ball;
         public:
 
             Connection(Ball* ball_from, Ball* ball_to, double weight);
             ~Connection();
 
             void update();
+            double getNeuralActivation();
 
         private:
             Ball* ball_from;
@@ -194,6 +196,7 @@ namespace nerveBall
     void lifeCountThread(Player* player, sf::RenderWindow& window);
     void gameOver();
     double scaleActivation(double activation);
+    double scaleActivationSigmoid(double activation);
 }
  
 
