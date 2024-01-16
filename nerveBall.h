@@ -193,6 +193,7 @@ namespace nerveBall
     bool gameIsOn;
     void lifeCountThread(Player* player, sf::RenderWindow& window);
     void gameOver();
+    double scaleActivation(double activation);
 }
  
 

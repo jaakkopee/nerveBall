@@ -104,8 +104,8 @@ nerveBall::Ball::Ball(sf::Vector2f position, sf::Vector2f velocity, double radiu
     this->color = color;
     this->direction = 0;
     this->neuralActivation = 0;
-    this->neuralActivationThreshold = 1.1;
-    this->addToNeuralActivation = 0.00001;
+    this->neuralActivationThreshold = 0.5;
+    this->addToNeuralActivation = 0.005;
     this->shape = sf::CircleShape(this->radius);
 }
 
@@ -119,9 +119,26 @@ void nerveBall::Ball::setNeuralActivation(double neuralActivation)
     this->neuralActivation = neuralActivation;
 }
 
+double nerveBall::scaleActivation(double activation)
+{
+    //a downward slope
+    if (activation < 0)
+    {
+        return activation*activation*-1;
+    }
+    //an upward slope
+    if (activation > 0)
+    {
+        return activation*activation;
+    }
+    return activation;
+}
+
+
 void nerveBall::Ball::update()
 {
-
+    this->neuralActivation += this->addToNeuralActivation;
+    this->neuralActivation = nerveBall::scaleActivation(this->neuralActivation);
     if(this->neuralActivation > this->neuralActivationThreshold)
     {
         this->neuralActivation = 0;
