@@ -581,7 +581,7 @@ int main()
             {
                 minusScore+=3000.0/network.balls[i]->getRadius();
             }
-            double timeBonus = player1->getLives() * 100;
+            double timeBonus = player1->getLives() * 500;
             int totalScore = player1->getScore() - (int)minusScore + (int)timeBonus;
 
             sf::Font font;
