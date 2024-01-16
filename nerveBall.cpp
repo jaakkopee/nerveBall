@@ -599,13 +599,13 @@ int main()
             timeBonusText.setPosition(300, 360);
             totalScoreText.setPosition(300, 390);
 
-            window.clear();
-            window.draw(gameOverText);
-            window.draw(scoreText);
-            window.draw(minusScoreText);
-            window.draw(timeBonusText);
-            window.draw(totalScoreText);
-            window.display();
+            sf::Color gameOverColor(255, 255, 255);
+            sf::Color scoreColor(255, 255, 255);
+            sf::Color minusScoreColor(255, 255, 255);
+            sf::Color timeBonusColor(255, 255, 255);
+            sf::Color totalScoreColor(255, 255, 255);
+
+
             while (window.isOpen())
             {
                 sf::Event event;
@@ -617,6 +617,116 @@ int main()
                         exit(0);
                     }
                 }
+
+                //shift colors
+                int temp = gameOverColor.r;
+                if (temp == 255)
+                {
+                    temp = 0;
+                }
+                gameOverColor.r = temp + 1;
+                temp = gameOverColor.g;
+                if (temp == 255)
+                {
+                    temp = 0;
+                }
+                gameOverColor.g = temp + 2;
+                temp = gameOverColor.b;
+                if (temp == 255)
+                {
+                    temp = 0;
+                }
+                gameOverColor.b = temp + 4;
+
+                temp = scoreColor.r;
+                if (temp == 255)
+                {
+                    temp = 0;
+                }
+                scoreColor.r = temp + 2;
+                temp = scoreColor.g;
+                if (temp == 255)
+                {
+                    temp = 0;
+                }
+                scoreColor.g = temp + 4;
+                temp = scoreColor.b;
+                if (temp == 255)
+                {
+                    temp = 0;
+                }
+                scoreColor.b = temp + 8;
+
+                temp = minusScoreColor.r;
+                if (temp == 255)
+                {
+                    temp = 0;
+                }
+                minusScoreColor.r = temp + 1;
+                temp = minusScoreColor.g;
+                if (temp == 255)
+                {
+                    temp = 0;
+                }
+                minusScoreColor.g = temp + 3;
+                temp = minusScoreColor.b;
+                if (temp == 255)
+                {
+                    temp = 0;
+                }
+                minusScoreColor.b = temp + 5;
+
+                temp = timeBonusColor.r;
+                if (temp == 255)
+                {
+                    temp = 0;
+                }
+                timeBonusColor.r = temp + 3;
+                temp = timeBonusColor.g;
+                if (temp == 255)
+                {
+                    temp = 0;
+                }
+                timeBonusColor.g = temp + 5;
+                temp = timeBonusColor.b;
+                if (temp == 255)
+                {
+                    temp = 0;
+                }
+                timeBonusColor.b = temp + 7;
+
+                temp = totalScoreColor.r;
+                if (temp == 255)
+                {
+                    temp = 0;
+                }
+                totalScoreColor.r = temp + 2;
+                temp = totalScoreColor.g;
+                if (temp == 255)
+                {
+                    temp = 0;
+                }
+                totalScoreColor.g = temp + 4;
+                temp = totalScoreColor.b;
+                if (temp == 255)
+                {
+                    temp = 0;
+                }
+                totalScoreColor.b = temp + 6;
+
+                gameOverText.setFillColor(gameOverColor);
+                scoreText.setFillColor(scoreColor);
+                minusScoreText.setFillColor(minusScoreColor);
+                timeBonusText.setFillColor(timeBonusColor);
+                totalScoreText.setFillColor(totalScoreColor);
+
+                window.clear();
+                window.draw(gameOverText);
+                window.draw(scoreText);
+                window.draw(minusScoreText);
+                window.draw(timeBonusText);
+                window.draw(totalScoreText);
+                window.display();
             }
             
         }
