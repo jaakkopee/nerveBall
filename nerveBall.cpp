@@ -646,16 +646,60 @@ int main()
             sf::Text firstLetterText = sf::Text(player1->getLettersOfName()[0], font, 30);
             sf::Text secondLetterText = sf::Text(player1->getLettersOfName()[1], font, 30);
             sf::Text thirdLetterText = sf::Text(player1->getLettersOfName()[2], font, 30);
+            sf::Text firstHiScoreText = sf::Text("A", font, 30);
+            sf::Text secondHiScoreText = sf::Text("A", font, 30);
+            sf::Text thirdHiScoreText = sf::Text("A", font, 30);
+
+            //read scores from file
+            std::ifstream file;
+            file.open("scores.txt");
+            std::string line;
+            std::vector<std::string> names = std::vector<std::string>();
+            std::vector<int> scores = std::vector<int>();
+            while(std::getline(file, line))
+            {
+                std::string name = line.substr(0, 3);
+                int score = std::stoi(line.substr(4, line.length()));
+                names.push_back(name);
+                scores.push_back(score);
+                std::cout << name << " " << score << "\n";
+            }
+            file.close();
+
+            //bubble sort
+            for(int i = 0; i < scores.size(); i++)
+            {
+                for(int j = 0; j < scores.size() - 1; j++)
+                {
+                    if (scores[j] < scores[j+1])
+                    {
+                        int temp = scores[j];
+                        scores[j] = scores[j+1];
+                        scores[j+1] = temp;
+                        std::string temp2 = names[j];
+                        names[j] = names[j+1];
+                        names[j+1] = temp2;
+                    }
+                }
+            }
 
 
-            gameOverText.setPosition(300, 200);
-            scoreText.setPosition(300, 300);
-            minusScoreText.setPosition(300, 330);
-            timeBonusText.setPosition(300, 360);
-            totalScoreText.setPosition(300, 390);
-            firstLetterText.setPosition(300, 450);
-            secondLetterText.setPosition(330, 450);
-            thirdLetterText.setPosition(360, 450);
+
+            firstHiScoreText.setString(names[0] + " " + std::to_string(scores[0]));
+            secondHiScoreText.setString(names[1] + " " + std::to_string(scores[1]));
+            thirdHiScoreText.setString(names[2] + " " + std::to_string(scores[2]));
+
+            gameOverText.setPosition(400 - gameOverText.getLocalBounds().width/2, 25);
+            scoreText.setPosition(400 - scoreText.getLocalBounds().width/2, 100);
+            minusScoreText.setPosition(400 - minusScoreText.getLocalBounds().width/2, 150);
+            timeBonusText.setPosition(400 - timeBonusText.getLocalBounds().width/2, 200);
+            totalScoreText.setPosition(400 - totalScoreText.getLocalBounds().width/2, 250);
+            firstLetterText.setPosition(400 - firstLetterText.getLocalBounds().width/2 - 30, 300);
+            secondLetterText.setPosition(400 - secondLetterText.getLocalBounds().width/2, 300);
+            thirdLetterText.setPosition(400 - thirdLetterText.getLocalBounds().width/2 + 30, 300);
+            firstHiScoreText.setPosition(400 - firstHiScoreText.getLocalBounds().width/2, 350);
+            secondHiScoreText.setPosition(400 - secondHiScoreText.getLocalBounds().width/2, 400);
+            thirdHiScoreText.setPosition(400 - thirdHiScoreText.getLocalBounds().width/2, 450);
 
             sf::Color gameOverColor(255, 255, 255);
             sf::Color scoreColor(255, 255, 255);
@@ -665,6 +709,9 @@ int main()
             sf::Color firstLetterColor(255, 255, 255);
             sf::Color secondLetterColor(255, 255, 255);
             sf::Color thirdLetterColor(255, 255, 255);
+            sf::Color firstHiScoreColor(255, 0 ,0);
+            sf::Color secondHiScoreColor(0, 255, 0);
+            sf::Color thirdHiScoreColor(0, 0, 255);
 
 
             while (window.isOpen())
@@ -866,6 +913,9 @@ int main()
                 firstLetterText.setFillColor(firstLetterColor);
                 secondLetterText.setFillColor(secondLetterColor);
                 thirdLetterText.setFillColor(thirdLetterColor);
+                firstHiScoreText.setFillColor(firstHiScoreColor);
+                secondHiScoreText.setFillColor(secondHiScoreColor);
+                thirdHiScoreText.setFillColor(thirdHiScoreColor);
 
                 firstLetterText.setString(player1->getLettersOfName()[0]);
                 secondLetterText.setString(player1->getLettersOfName()[1]);
@@ -880,6 +930,9 @@ int main()
                 window.draw(firstLetterText);
                 window.draw(secondLetterText);
                 window.draw(thirdLetterText);
+                window.draw(firstHiScoreText);
+                window.draw(secondHiScoreText);
+                window.draw(thirdHiScoreText);
                 window.display();
             }
             
