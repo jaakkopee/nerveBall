@@ -625,6 +625,7 @@ int main()
     {
         if (nerveBall::gameIsOn == false)
         {
+            //game over lane
             //count the balls and substract from score
             double minusScore = 0;
             for(int i = 0; i < network.balls.size(); i++)
