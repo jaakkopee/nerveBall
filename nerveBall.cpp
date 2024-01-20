@@ -172,7 +172,7 @@ void nerveBall::Ball::update()
     
 
     double direction = helper::angle(this->velocity);
-    direction += this->neuralActivation/80;
+    direction += this->neuralActivation/62;
     double speed = helper::length(this->velocity);
     speed += this->neuralActivation/200;
     this->velocity = helper::vector(speed, direction);
@@ -347,7 +347,7 @@ nerveBall::Connection* nerveBall::BallNetwork::addConnection(Ball* ball_from, Ba
     return this->connections.back();
 }
 
-void nerveBall::BallNetwork::removeBall(Ball* ball) //TODO: remove connections
+void nerveBall::BallNetwork::removeBall(Ball* ball)
 {
     //handle last ball
     if (this->balls.size() == 1 && this->balls[0]->radius < 5)
@@ -409,13 +409,17 @@ void nerveBall::BallNetwork::divideBall(Ball* ball, Player* player, sf::RenderWi
     {
         this->removeBall(ball);
         player->setLives(player->getLives() + 1);
-        player->score += (int)(3000.0/ball->radius);
+        int addToScore = (int)(helper::length(ball->velocity)*3000.0/ball->radius);
+        player->setScore(player->getScore() + addToScore);
+        nerveBall::lastScore=addToScore;
         player->updateLifeCount(player, player->getLives(), window);
         
         return;
     }
 
-    player->score += (int)(3000.0/ball->radius);
+    int addToScore2 = (int)(helper::length(ball->velocity)*3000.0/ball->radius);
+    player->setScore(player->getScore() + addToScore2);
+    nerveBall::lastScore=addToScore2;
     player->update();
     player->draw(window);
 
@@ -504,6 +508,8 @@ nerveBall::Player::Player()
     this->scoreText.setPosition(10, 10);
     this->livesText = sf::Text("Time: " + std::to_string(this->lives) + " minutes", this->font, 20);
     this->livesText.setPosition(10, 40);
+    this->lastScoreText = sf::Text("Last split: " + std::to_string(nerveBall::lastScore), this->font, 20);
+    this->lastScoreText.setPosition(10, 70);
 }
 
 nerveBall::Player::~Player()
@@ -515,12 +521,14 @@ void nerveBall::Player::update()
 {
     this->scoreText.setString("Score: " + std::to_string(this->score));
     this->livesText.setString("Time: " + std::to_string(this->lives) + " min");
+    this->lastScoreText.setString("Last split: " + std::to_string(nerveBall::lastScore));
 }
 
 void nerveBall::Player::draw(sf::RenderWindow& window)
 {
     window.draw(this->scoreText);
     window.draw(this->livesText);
+    window.draw(this->lastScoreText);
 }
 
 void nerveBall::Player::setScore(int score)
@@ -551,6 +559,7 @@ int main()
     window.setFramerateLimit(60);
     nerveBall::BallNetwork network = nerveBall::BallNetwork();
     nerveBall::Player *player1 = new nerveBall::Player();
+    nerveBall::lastScore = 0;
     for(int i = 0; i < 3; i++)
     {
         network.addBall(new nerveBall::Ball(sf::Vector2f(nerveBall::helper::random(0, 800), nerveBall::helper::random(0, 600)), sf::Vector2f(nerveBall::helper::random(-5, 5), nerveBall::helper::random(-5, 5)), 15, sf::Color::White));
@@ -578,9 +587,11 @@ int main()
             double minusScore = 0;
             for(int i = 0; i < network.balls.size(); i++)
             {
-                minusScore+=3000.0/network.balls[i]->getRadius();
+                double radius = network.balls[i]->getRadius();
+                double length = nerveBall::helper::length(network.balls[i]->getVelocity());
+                minusScore+=length*3000.0/radius;
             }
-            double timeBonus = player1->getLives() * 500;
+            double timeBonus = player1->getLives() * 1000;
             int totalScore = player1->getScore() - (int)minusScore + (int)timeBonus;
 
             sf::Font font;

@@ -190,9 +190,11 @@ namespace nerveBall
             sf::Font font;
             sf::Text scoreText;
             sf::Text livesText;
+            sf::Text lastScoreText;
     };
 
     bool gameIsOn;
+    int lastScore;
     void lifeCountThread(Player* player, sf::RenderWindow& window);
     void gameOver();
     double scaleActivation(double activation);
