@@ -199,6 +199,10 @@ namespace nerveBall
     void gameOver();
     double scaleActivation(double activation);
     double scaleActivationSigmoid(double activation);
+    void slowDown(Ball* ball);
+    void speedUp(Ball* ball);
+    void slowDown(BallNetwork& ballNetwork);
+    void speedUp(BallNetwork& ballNetwork);
 }
  
 

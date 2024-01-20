@@ -551,6 +551,33 @@ int nerveBall::Player::getLives()
     return this->lives;
 }
 
+void nerveBall::slowDown(Ball* ball)
+{
+    ball->setVelocity(ball->getVelocity() * 0.9f);
+}
+
+void nerveBall::speedUp(Ball* ball)
+{
+    ball->setVelocity(ball->getVelocity() * 1.1f);
+}
+
+void nerveBall::slowDown(BallNetwork& network)
+{
+    for(int i = 0; i < network.balls.size(); i++)
+    {
+        nerveBall::slowDown(network.balls[i]);
+    }
+}
+
+void nerveBall::speedUp(BallNetwork& network)
+{
+    for(int i = 0; i < network.balls.size(); i++)
+    {
+        nerveBall::speedUp(network.balls[i]);
+    }
+}
+
+
 
 int main()
 {
@@ -763,17 +790,16 @@ int main()
                     
                 }
             }
-            if (event.type == sf::Event::KeyPressed)
+            //detect mouse wheel
+            if(event.type == sf::Event::MouseWheelMoved)
             {
-                if (event.key.code == sf::Keyboard::Space)
+                if(event.mouseWheel.delta > 0)
                 {
-                    network.setWeigths(1);
-                    std::cout << "Weights set to 1" << std::endl;
+                    nerveBall::speedUp(network);
                 }
-                if (event.key.code == sf::Keyboard::Return)
+                if(event.mouseWheel.delta < 0)
                 {
-                    network.setWeigths(-1);
-                    std::cout << "Weights set to -1" << std::endl;
+                    nerveBall::slowDown(network);
                 }
             }
         }
