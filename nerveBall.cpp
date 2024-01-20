@@ -767,7 +767,7 @@ int main()
             }
             
         }
-
+        //handle events
         sf::Event event;
         while(window.pollEvent(event))
         {
