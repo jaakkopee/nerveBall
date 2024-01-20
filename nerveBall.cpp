@@ -369,7 +369,7 @@ void nerveBall::lifeCountThread(Player* player, sf::RenderWindow& window)
 {
     while(nerveBall::gameIsOn)
     {
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::this_thread::sleep_for(std::chrono::seconds(60));
         //decrement the lives of the player
         player->updateLifeCount(player, player->getLives() - 1, window);
     }
