@@ -2,6 +2,7 @@
 #include <iostream>
 #include <chrono>
 #include <thread>
+#include <fstream>
 
 
 int nerveBall::helper::random(int min, int max)
@@ -153,18 +154,7 @@ void nerveBall::Ball::update()
     }
     activation = nerveBall::scaleActivationSigmoid(activation);
     this->neuralActivation += activation;
-    //std::cout << this->neuralActivation << std::endl;
-    /*
-    if(this->neuralActivation > this->neuralActivationThreshold)
-    {
-        this->neuralActivation = 0;
-    }
-    if (this->neuralActivation < -this->neuralActivationThreshold)
-    {
-        this->neuralActivation = 0;
-    }*/
-    //max=1.0
-    //min=-1.0
+
     if (this->neuralActivation >= this->neuralActivationThreshold || this->neuralActivation <= -this->neuralActivationThreshold)
     {
         this->neuralActivation = 0;
@@ -379,7 +369,7 @@ void nerveBall::lifeCountThread(Player* player, sf::RenderWindow& window)
 {
     while(nerveBall::gameIsOn)
     {
-        std::this_thread::sleep_for(std::chrono::seconds(60));
+        std::this_thread::sleep_for(std::chrono::seconds(1));
         //decrement the lives of the player
         player->updateLifeCount(player, player->getLives() - 1, window);
     }
@@ -510,6 +500,11 @@ nerveBall::Player::Player()
     this->livesText.setPosition(10, 40);
     this->lastScoreText = sf::Text("Last split: " + std::to_string(nerveBall::lastScore), this->font, 20);
     this->lastScoreText.setPosition(10, 70);
+    this->lettersOfName = std::vector<std::string>(3);
+    this->lettersOfName[0] = "A";
+    this->lettersOfName[1] = "A";
+    this->lettersOfName[2] = "A";
+    this->letterOfNameIndex = 0;
 }
 
 nerveBall::Player::~Player()
@@ -551,6 +546,26 @@ int nerveBall::Player::getLives()
     return this->lives;
 }
 
+void nerveBall::Player::setLetterOfName(char letter)
+{
+    this->lettersOfName[this->letterOfNameIndex] = letter;
+}
+
+std::vector<std::string> nerveBall::Player::getLettersOfName()
+{
+    return this->lettersOfName;
+}
+
+void nerveBall::Player::setLetterOfNameIndex(int letterOfNameIndex)
+{
+    this->letterOfNameIndex = letterOfNameIndex;
+}
+
+int nerveBall::Player::getLetterOfNameIndex()
+{
+    return this->letterOfNameIndex;
+}
+
 void nerveBall::slowDown(Ball* ball)
 {
     ball->setVelocity(ball->getVelocity() * 0.9f);
@@ -582,7 +597,7 @@ void nerveBall::speedUp(BallNetwork& network)
 int main()
 {
     srand(time(NULL));
-    sf::RenderWindow window(sf::VideoMode(800, 600), "Nerve Ball");
+    sf::RenderWindow window(sf::VideoMode(800, 600), "Nerve Ball", sf::Style::Close);
     window.setFramerateLimit(60);
     nerveBall::BallNetwork network = nerveBall::BallNetwork();
     nerveBall::Player *player1 = new nerveBall::Player();
@@ -628,6 +643,9 @@ int main()
             sf::Text minusScoreText = sf::Text("Ball penalty: " + std::to_string((int)minusScore), font, 30);
             sf::Text timeBonusText = sf::Text("Time bonus: " + std::to_string((int)timeBonus), font, 30);
             sf::Text totalScoreText = sf::Text("Total: " + std::to_string(totalScore), font, 30);
+            sf::Text firstLetterText = sf::Text(player1->getLettersOfName()[0], font, 30);
+            sf::Text secondLetterText = sf::Text(player1->getLettersOfName()[1], font, 30);
+            sf::Text thirdLetterText = sf::Text(player1->getLettersOfName()[2], font, 30);
 
 
             gameOverText.setPosition(300, 200);
@@ -635,12 +653,18 @@ int main()
             minusScoreText.setPosition(300, 330);
             timeBonusText.setPosition(300, 360);
             totalScoreText.setPosition(300, 390);
+            firstLetterText.setPosition(300, 450);
+            secondLetterText.setPosition(330, 450);
+            thirdLetterText.setPosition(360, 450);
 
             sf::Color gameOverColor(255, 255, 255);
             sf::Color scoreColor(255, 255, 255);
             sf::Color minusScoreColor(255, 255, 255);
             sf::Color timeBonusColor(255, 255, 255);
             sf::Color totalScoreColor(255, 255, 255);
+            sf::Color firstLetterColor(255, 255, 255);
+            sf::Color secondLetterColor(255, 255, 255);
+            sf::Color thirdLetterColor(255, 255, 255);
 
 
             while (window.isOpen())
@@ -653,6 +677,89 @@ int main()
                         window.close();
                         exit(0);
                     }
+                    //space to change letter of name index
+                    if(event.type == sf::Event::KeyPressed)
+                    {
+                        if(event.key.code == sf::Keyboard::Space)
+                        {
+                            int letterOfNameIndex = player1->getLetterOfNameIndex();
+                            if (letterOfNameIndex == 0)
+                            {
+                                player1->setLetterOfNameIndex(1);
+                            }
+                            if (letterOfNameIndex == 1)
+                            {
+                                player1->setLetterOfNameIndex(2);
+                            }
+                            if (letterOfNameIndex == 2)
+                            {
+                                player1->setLetterOfNameIndex(0);
+                            }
+                        }
+                    }
+                    //mouse wheel to change letter
+                    std::string letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+                    if(event.type == sf::Event::MouseWheelMoved)
+                    {
+                        if(event.mouseWheel.delta > 0)
+                        {
+                            int letterOfNameIndex = player1->getLetterOfNameIndex();
+                            std::string letter = player1->getLettersOfName()[letterOfNameIndex];
+                            int index = letters.find(letter);
+                            index++;
+                            if (index > 25)
+                            {
+                                index = 0;
+                            }
+                            player1->setLetterOfName(letters[index]);
+                        }
+                        if(event.mouseWheel.delta < 0)
+                        {
+                            int letterOfNameIndex = player1->getLetterOfNameIndex();
+                            std::string letter = player1->getLettersOfName()[letterOfNameIndex];
+                            int index = letters.find(letter);
+                            index--;
+                            if (index < 0)
+                            {
+                                index = 25;
+                            }
+                            player1->setLetterOfName(letters[index]);
+                        }
+                    }
+                    //enter to save score
+                    if(event.type == sf::Event::KeyPressed)
+                    {
+                        if(event.key.code == sf::Keyboard::Return)
+                        {
+                            std::string name = player1->getLettersOfName()[0] + player1->getLettersOfName()[1] + player1->getLettersOfName()[2];
+                            std::ofstream file;
+                            file.open("scores.txt", std::ios::app);
+                            file << name << " " << totalScore << "\n";
+                            file.close();
+                            window.close();
+                            exit(0);
+                        }
+                    }
+                }
+
+                int letterOfNameIndex = player1->getLetterOfNameIndex();
+                if (letterOfNameIndex == 0)
+                {
+                    firstLetterColor = sf::Color(255, 0, 0);
+                    secondLetterColor = sf::Color(255, 255, 255);
+                    thirdLetterColor = sf::Color(255, 255, 255);
+                }
+                if (letterOfNameIndex == 1)
+                {
+                    firstLetterColor = sf::Color(255, 255, 255);
+                    secondLetterColor = sf::Color(255, 0, 0);
+                    thirdLetterColor = sf::Color(255, 255, 255);
+                }
+                if (letterOfNameIndex == 2)
+                {
+                    firstLetterColor = sf::Color(255, 255, 255);
+                    secondLetterColor = sf::Color(255, 255, 255);
+                    thirdLetterColor = sf::Color(255, 0, 0);
                 }
 
                 //shift colors
@@ -756,6 +863,13 @@ int main()
                 minusScoreText.setFillColor(minusScoreColor);
                 timeBonusText.setFillColor(timeBonusColor);
                 totalScoreText.setFillColor(totalScoreColor);
+                firstLetterText.setFillColor(firstLetterColor);
+                secondLetterText.setFillColor(secondLetterColor);
+                thirdLetterText.setFillColor(thirdLetterColor);
+
+                firstLetterText.setString(player1->getLettersOfName()[0]);
+                secondLetterText.setString(player1->getLettersOfName()[1]);
+                thirdLetterText.setString(player1->getLettersOfName()[2]);
 
                 window.clear();
                 window.draw(gameOverText);
@@ -763,6 +877,9 @@ int main()
                 window.draw(minusScoreText);
                 window.draw(timeBonusText);
                 window.draw(totalScoreText);
+                window.draw(firstLetterText);
+                window.draw(secondLetterText);
+                window.draw(thirdLetterText);
                 window.display();
             }
             

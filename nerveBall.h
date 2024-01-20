@@ -182,11 +182,17 @@ namespace nerveBall
             void setLives(int lives);
             int getLives();
             void updateLifeCount(Player* player, int lives, sf::RenderWindow& window);
+            void setLetterOfName(char letter);
+            std::vector<std::string> getLettersOfName();
+            void setLetterOfNameIndex(int letterOfNameIndex);
+            int getLetterOfNameIndex();
             
 
         private:
             int score;
             int lives;
+            std::vector<std::string> lettersOfName;
+            int letterOfNameIndex;
             sf::Font font;
             sf::Text scoreText;
             sf::Text livesText;
