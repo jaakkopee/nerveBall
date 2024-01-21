@@ -166,6 +166,8 @@ void nerveBall::Ball::update()
     double speed = helper::length(this->velocity);
     speed += this->neuralActivation/200;
     this->velocity = helper::vector(speed, direction);
+    if (speed < 2){
+        this->velocity = helper::vector(2, direction);}
 
     this->position += this->velocity;
     if(this->position.x < 0)
@@ -415,6 +417,7 @@ void nerveBall::BallNetwork::divideBall(Ball* ball, Player* player, sf::RenderWi
 
     sf::Vector2f position = ball->getPosition();
     sf::Vector2f velocity = ball->getVelocity();
+
     double radius = ball->radius-3;
     sf::Color color = ball->getColor();
     color.r -= 50;
@@ -568,12 +571,20 @@ int nerveBall::Player::getLetterOfNameIndex()
 
 void nerveBall::slowDown(Ball* ball)
 {
-    ball->setVelocity(ball->getVelocity() * 0.9f);
+    double length = helper::length(ball->getVelocity());
+    if (length > 0.1)
+    {
+        ball->setVelocity(ball->getVelocity() * 0.9f);
+    }
 }
 
 void nerveBall::speedUp(Ball* ball)
 {
-    ball->setVelocity(ball->getVelocity() * 1.1f);
+    double length = helper::length(ball->getVelocity());
+    if (length < 36)
+    {
+        ball->setVelocity(ball->getVelocity() * 1.1f);
+    }
 }
 
 void nerveBall::slowDown(BallNetwork& network)
