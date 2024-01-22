@@ -645,7 +645,7 @@ int main()
                 double length = nerveBall::helper::length(network.balls[i]->getVelocity());
                 minusScore+=length*3000.0/radius;
             }
-            double timeBonus = player1->getLives() * 1000;
+            double timeBonus = player1->getLives() * 700;
             int totalScore = player1->getScore() - (int)minusScore + (int)timeBonus;
 
             sf::Font font;
@@ -674,7 +674,6 @@ int main()
                 int score = std::stoi(line.substr(4, line.length()));
                 names.push_back(name);
                 scores.push_back(score);
-                std::cout << name << " " << score << "\n";
             }
             file.close();
 
@@ -694,7 +693,6 @@ int main()
                     }
                 }
             }
-
 
 
             firstHiScoreText.setString(names[0] + " " + std::to_string(scores[0]));
@@ -793,10 +791,45 @@ int main()
                             std::string name = player1->getLettersOfName()[0] + player1->getLettersOfName()[1] + player1->getLettersOfName()[2];
                             std::ofstream file;
                             file.open("scores.txt", std::ios::app);
-                            file << name << " " << totalScore << "\n";
+                            file << name << " " << totalScore << std::endl;
                             file.close();
-                            window.close();
-                            exit(0);
+
+
+
+                            //read scores from file
+                            std::ifstream file2;
+                            file2.open("scores.txt");
+                            std::string line;
+                            std::vector<std::string> names = std::vector<std::string>();
+                            std::vector<int> scores = std::vector<int>();
+                            while(std::getline(file2, line))
+                            {
+                                std::string name = line.substr(0, 3);
+                                int score = std::stoi(line.substr(4, line.length()));
+                                names.push_back(name);
+                                scores.push_back(score);
+                            }
+                            file2.close();
+                            //bubble sort
+                            for(int i = 0; i < scores.size(); i++)
+                            {
+                                for(int j = 0; j < scores.size() - 1; j++)
+                                {
+                                    if (scores[j] < scores[j+1])
+                                    {
+                                        int temp = scores[j];
+                                        scores[j] = scores[j+1];
+                                        scores[j+1] = temp;
+                                        std::string temp2 = names[j];
+                                        names[j] = names[j+1];
+                                        names[j+1] = temp2;
+                                    }
+                                }
+                            }
+                            //update the high scores
+                            firstHiScoreText.setString(names[0] + " " + std::to_string(scores[0]));
+                            secondHiScoreText.setString(names[1] + " " + std::to_string(scores[1]));
+                            thirdHiScoreText.setString(names[2] + " " + std::to_string(scores[2]));
                         }
                     }
                 }
