@@ -798,6 +798,36 @@ double nerveBall::audio::Osc1::getSample()
     return sample;
 }
 
+double nerveBall::audio::Osc1::getFrequency()
+{
+    return this->frequency;
+}
+
+double nerveBall::audio::Osc1::getAmplitude()
+{
+    return this->amplitude;
+}
+
+int nerveBall::audio::Osc1::getSampleRate()
+{
+    return this->sampleRate;
+}
+
+snd_pcm_format_t nerveBall::audio::Osc1::getFormat()
+{
+    return this->format;
+}
+
+int nerveBall::audio::Osc1::getChannels()
+{
+    return this->channels;
+}
+
+int nerveBall::audio::Osc1::getPeriodSize()
+{
+    return this->periodSize;
+}
+
 void nerveBall::audio::startAudio(alsaPlayer* player)
 {
     audio::playAudio = true;
@@ -808,10 +838,12 @@ void nerveBall::audio::startAudio(alsaPlayer* player)
 void nerveBall::audio::playSound(alsaPlayer* player, int osc_idx)
 {
     player->oscillators[osc_idx]->setAmplitude(0.1);
-}
-
-void nerveBall::audio::stopSound(alsaPlayer* player, int osc_idx)
-{
+    for (int i = 0; i < 100; i++)
+    {
+        player->oscillators[osc_idx]->setAmplitude(player->oscillators[osc_idx]->getAmplitude() + 0.001);
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    }
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
     player->oscillators[osc_idx]->setAmplitude(0.0);
 }
 
@@ -827,8 +859,9 @@ int main()
     srand(time(NULL));
 
     //audio setup
-    nerveBall::audio::alsaPlayer* player = new nerveBall::audio::alsaPlayer();
-    nerveBall::audio::startAudio(player);
+    nerveBall::audio::alsaPlayer* audioPlayer = new nerveBall::audio::alsaPlayer();
+    nerveBall::audio::startAudio(audioPlayer);
+
     sf::RenderWindow window(sf::VideoMode(800, 600), "Nerve Ball", sf::Style::Close);
     window.setFramerateLimit(60);
     nerveBall::BallNetwork network = nerveBall::BallNetwork();
@@ -1219,7 +1252,9 @@ int main()
                     {
                         if(network.balls[i]->isClicked(sf::Vector2f(event.mouseButton.x, event.mouseButton.y)))
                         {
-                           network.divideBall(network.balls[i], player1, window);
+                            network.divideBall(network.balls[i], player1, window);
+                            std::thread soundThread = std::thread(nerveBall::audio::playSound, audioPlayer, i%10);
+                            soundThread.detach();
                         }
 
                     }

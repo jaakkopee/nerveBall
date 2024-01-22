@@ -265,8 +265,7 @@ namespace nerveBall
                 double getFrequency();
                 double getAmplitude();
                 int getSampleRate();
-                int getBufferSize();
-                int getFormat();
+                snd_pcm_format_t getFormat();
                 int getChannels();
                 int getPeriodSize();
                 int getWaveform();
