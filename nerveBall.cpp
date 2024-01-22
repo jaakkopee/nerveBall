@@ -603,11 +603,232 @@ void nerveBall::speedUp(BallNetwork& network)
     }
 }
 
+nerveBall::audio::alsaPlayer::alsaPlayer()
+{
+    this->buffer = new char[44100];
+    this->bufferSize = 44100;
+    this->sampleRate = 44100;
+    this->format = SND_PCM_FORMAT_S16_LE;
+    this->channels = 1;
+    this->periodSize = 1024;
+    this->periodCount = 2;
+    this->frames = 1024;
+    //init oscs
+    for(int i = 0; i < 10; i++)
+    {
+        this->oscillators[i] = new Osc1();
+    }
+    //set osc params
+    for(int i = 0; i < 10; i++)
+    {
+        this->oscillators[i]->setSampleRate(this->sampleRate);
+        this->oscillators[i]->setBufferSize(this->bufferSize);
+        this->oscillators[i]->setFormat(this->format);
+        this->oscillators[i]->setChannels(this->channels);
+        this->oscillators[i]->setPeriodSize(this->periodSize);
+    }
+    //set osc freqs (equal temaperament)
+    for (int i = 0; i < 10; i++)
+    {
+        this->oscillators[i]->setFrequency(110.0 * pow(2.0, i/12.0));
+    }
+    //set osc amps
+    for (int i = 0; i < 10; i++)
+    {
+        this->oscillators[i]->setAmplitude(0.1);
+    }
+    //setup alsa
+    int err;
+    if ((err = snd_pcm_open(&this->handle, "default", SND_PCM_STREAM_PLAYBACK, 0)) < 0)
+    {
+        std::cout << "cannot open audio device" << std::endl;
+        exit(1);
+    }
+    if ((err = snd_pcm_hw_params_malloc(&this->params)) < 0)
+    {
+        std::cout << "cannot allocate hardware parameter structure" << std::endl;
+        exit(1);
+    }
+    if ((err = snd_pcm_hw_params_any(this->handle, this->params)) < 0)
+    {
+        std::cout << "cannot initialize hardware parameter structure" << std::endl;
+        exit(1);
+    }
+    if ((err = snd_pcm_hw_params_set_access(this->handle, this->params, SND_PCM_ACCESS_RW_INTERLEAVED)) < 0)
+    {
+        std::cout << "cannot set access type" << std::endl;
+        exit(1);
+    }
+    if ((err = snd_pcm_hw_params_set_format(this->handle, this->params, this->format)) < 0)
+    {
+        std::cout << "cannot set sample format" << std::endl;
+        exit(1);
+    }
+    if ((err = snd_pcm_hw_params_set_channels(this->handle, this->params, this->channels)) < 0)
+    {
+        std::cout << "cannot set channel count" << std::endl;
+        exit(1);
+    }
+    if ((err = snd_pcm_hw_params_set_rate_near(this->handle, this->params, &this->sampleRate, 0)) < 0)
+    {
+        std::cout << "cannot set sample rate" << std::endl;
+        exit(1);
+    }
+    if ((err = snd_pcm_hw_params_set_period_size_near(this->handle, this->params, &this->periodSize, 0)) < 0)
+    {
+        std::cout << "cannot set period size" << std::endl;
+        exit(1);
+    }
+    if ((err = snd_pcm_hw_params_set_periods_near(this->handle, this->params, &this->periodCount, 0)) < 0)
+    {
+        std::cout << "cannot set period count" << std::endl;
+        exit(1);
+    }
+    if ((err = snd_pcm_hw_params(this->handle, this->params)) < 0)
+    {
+        std::cout << "cannot set parameters" << std::endl;
+        exit(1);
+    }
+    snd_pcm_hw_params_free(this->params);
+    if ((err = snd_pcm_prepare(this->handle)) < 0)
+    {
+        std::cout << "cannot prepare audio interface for use" << std::endl;
+        exit(1);
+    }
+
+}
+
+nerveBall::audio::alsaPlayer::~alsaPlayer()
+{
+    delete[] this->buffer;
+    for(int i = 0; i < 10; i++)
+    {
+        delete this->oscillators[i];
+    }
+    snd_pcm_close(this->handle);
+}
+
+void nerveBall::audio::alsaPlayer::play()
+{
+    while (audio::playAudio)
+    {
+     
+        for(int i = 0; i < this->bufferSize; i++)
+        {
+            //get sample from oscillators
+            double sample = 0;
+            for(int j = 0; j < 10; j++)
+            {
+                sample += this->oscillators[j]->getSample();
+            }
+            //scale sample
+            sample /= 10;
+            //write sample to buffer
+            this->buffer[i] = (char)(sample * 127);
+            
+
+        }
+        snd_pcm_writei(this->handle, this->buffer, this->frames);
+    }
+}
+
+nerveBall::audio::Osc1::Osc1()
+{
+    this->frequency = 440;
+    this->amplitude = 0.1;
+    this->sampleRate = 44100;
+    this->bufferSize = 44100;
+    this->format = SND_PCM_FORMAT_S16_LE;
+    this->channels = 1;
+    this->periodSize = 1024;
+    this->phase = 0;
+    this->phaseIncrement = 0;
+}
+
+nerveBall::audio::Osc1::~Osc1()
+{
+
+}
+
+void nerveBall::audio::Osc1::setFrequency(double frequency)
+{
+    this->frequency = frequency;
+    this->phaseIncrement = 2 * M_PI * this->frequency / this->sampleRate;
+}
+
+void nerveBall::audio::Osc1::setAmplitude(double amplitude)
+{
+    this->amplitude = amplitude;
+}
+
+void nerveBall::audio::Osc1::setSampleRate(int sampleRate)
+{
+    this->sampleRate = sampleRate;
+    this->phaseIncrement = 2 * M_PI * this->frequency / this->sampleRate;
+}
+
+void nerveBall::audio::Osc1::setBufferSize(int bufferSize)
+{
+    this->bufferSize = bufferSize;
+}
+
+void nerveBall::audio::Osc1::setFormat(snd_pcm_format_t format)
+{
+    this->format = format;
+}
+
+void nerveBall::audio::Osc1::setChannels(int channels)
+{
+    this->channels = channels;
+}
+
+void nerveBall::audio::Osc1::setPeriodSize(int periodSize)
+{
+    this->periodSize = periodSize;
+}
+
+double nerveBall::audio::Osc1::getSample()
+{
+    double sample = this->amplitude * sin(this->phase);
+    this->phase += this->phaseIncrement;
+    if (this->phase > 2 * M_PI)
+    {
+        this->phase -= 2 * M_PI;
+    }
+    return sample;
+}
+
+void nerveBall::audio::startAudio(alsaPlayer* player)
+{
+    audio::playAudio = true;
+    std::thread audioThread(&alsaPlayer::play, player);
+    audioThread.detach();
+}
+
+void nerveBall::audio::playSound(alsaPlayer* player, int osc_idx)
+{
+    player->oscillators[osc_idx]->setAmplitude(0.1);
+}
+
+void nerveBall::audio::stopSound(alsaPlayer* player, int osc_idx)
+{
+    player->oscillators[osc_idx]->setAmplitude(0.0);
+}
+
+
+
+
+
+
 
 
 int main()
 {
     srand(time(NULL));
+
+    //audio setup
+    nerveBall::audio::alsaPlayer* player = new nerveBall::audio::alsaPlayer();
+    nerveBall::audio::startAudio(player);
     sf::RenderWindow window(sf::VideoMode(800, 600), "Nerve Ball", sf::Style::Close);
     window.setFramerateLimit(60);
     nerveBall::BallNetwork network = nerveBall::BallNetwork();

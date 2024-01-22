@@ -209,6 +209,90 @@ namespace nerveBall
     void speedUp(Ball* ball);
     void slowDown(BallNetwork& ballNetwork);
     void speedUp(BallNetwork& ballNetwork);
-}
+
+    namespace audio{
+        class Osc1;
+
+        class alsaPlayer{
+
+            friend class Osc1;
+            public:
+                alsaPlayer();
+                ~alsaPlayer();
+                void play();
+                void stop();
+                void setSampleRate(int sampleRate);
+                void setBufferSize(int bufferSize);
+                void setFormat(int format);
+                void setChannels(int channels);
+                void setPeriodSize(int periodSize);
+                Osc1* oscillators[10];
+
+
+            private:
+                unsigned int sampleRate;
+                int bufferSize;
+                snd_pcm_format_t format;
+                int channels;
+                snd_pcm_uframes_t periodSize;
+                unsigned int periodCount;
+                snd_pcm_t *handle;
+                snd_pcm_hw_params_t *params;
+                snd_pcm_uframes_t frames;
+                char *buffer;
+                
+                
+        }; // class alsaPlayer
+       
+        class Osc1{
+
+            friend class alsaPlayer;
+
+            public:
+                Osc1();
+                ~Osc1();
+                void setFrequency(double frequency);
+                void setAmplitude(double amplitude);
+                void setSampleRate(int sampleRate);
+                void setBufferSize(int bufferSize);
+                void setFormat(snd_pcm_format_t format);
+                void setChannels(int channels);
+                void setPeriodSize(int periodSize);
+                void setWaveform(int waveform);
+                void setPhase(double phase);
+                void setPhaseIncrement(double phaseIncrement);
+
+                double getFrequency();
+                double getAmplitude();
+                int getSampleRate();
+                int getBufferSize();
+                int getFormat();
+                int getChannels();
+                int getPeriodSize();
+                int getWaveform();
+                double getPhase();
+                double getPhaseIncrement();
+                
+                double getSample();
+
+            private:
+                double frequency;
+                double amplitude;
+                unsigned int sampleRate;
+                int bufferSize;
+                snd_pcm_format_t format;
+                int channels;
+                snd_pcm_uframes_t periodSize;
+                double phase;
+                double phaseIncrement;
+                double sample;
+                
+        }; // class Osc1
+        bool playAudio;
+        void playSound(alsaPlayer* player, int osc_idx);
+        void stopSound(alsaPlayer* player, int osc_idx);
+        void startAudio(alsaPlayer* player);
+    } // namespace audio
+} // namespace nerveBall
  
 
