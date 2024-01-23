@@ -837,12 +837,7 @@ void nerveBall::audio::startAudio(alsaPlayer* player)
 
 void nerveBall::audio::playSound(alsaPlayer* player, int osc_idx)
 {
-    player->oscillators[osc_idx]->setAmplitude(0.1);
-    for (int i = 0; i < 100; i++)
-    {
-        player->oscillators[osc_idx]->setAmplitude(player->oscillators[osc_idx]->getAmplitude() + 0.001);
-        std::this_thread::sleep_for(std::chrono::milliseconds(10));
-    }
+    player->oscillators[osc_idx]->setAmplitude(0.6);
     std::this_thread::sleep_for(std::chrono::milliseconds(100));
     player->oscillators[osc_idx]->setAmplitude(0.0);
 }
