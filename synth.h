@@ -40,8 +40,7 @@ class Oscillator {
         void setFrequency(double frequency);
         void setPhase(double phase);
         void setAmplitude(double amplitude);
-        float getSample(unsigned int sampleRate);
-        
+        float getSample(unsigned int sampleRate);      
 };
 
 //a sequence class
@@ -59,6 +58,7 @@ class Sequence {
         void sequenceThread();
         float getSample(unsigned int sampleRate);
         void updateSequence();
+        float applyEnvelope(float sample, unsigned int sampleRate);
 };
 
 //alsa sound output

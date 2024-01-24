@@ -119,6 +119,72 @@ float Sequence::getSample(unsigned int sampleRate){
     for (int i = 0; i < oscillators.size(); i++) {
         sample += oscillators[i].getSample(sampleRate);
     }
+    return applyEnvelope(sample, sampleRate);
+}
+
+float Sequence::applyEnvelope(float sample, unsigned int sampleRate) {
+    // Calculate the current time in seconds
+    auto currentTime = std::chrono::high_resolution_clock::now();
+    float elapsedTime = std::chrono::duration<float>(currentTime - startTime).count();
+    
+    // Calculate the total duration of the sequence
+    float totalDuration = 0;
+    for (const auto& note : notes) {
+        totalDuration += note.duration;
+    }
+    
+    // Calculate the current note index based on the elapsed time and the note durations
+    int noteIndex = 0;
+    float noteStartTime = 0;
+    for (int i = 0; i < notes.size(); i++) {
+        if (elapsedTime >= noteStartTime && elapsedTime < noteStartTime + notes[i].duration) {
+            noteIndex = i;
+            break;
+        }
+        noteStartTime += notes[i].duration;
+    }
+    
+    // Calculate the current note's start time and end time
+    float noteStart = 0;
+    for (int i = 0; i < noteIndex; i++) {
+        noteStart += notes[i].duration;
+    }
+    float noteEnd = noteStart + notes[noteIndex].duration;
+    
+    // Calculate the current note's attack, decay, sustain, and release times
+    float attackTime = notes[noteIndex].duration/10;
+    float decayTime = notes[noteIndex].duration/10;
+    float sustainTime = notes[noteIndex].duration/2;
+    float releaseTime = notes[noteIndex].duration/10;
+    
+    // Calculate the current note's attack, decay, sustain, and release volumes
+    float attackVolume = notes[noteIndex].volume;
+    float decayVolume = notes[noteIndex].volume/2;
+    float sustainVolume = notes[noteIndex].volume/2;
+    float releaseVolume = 0;
+    
+    // Calculate the current note's attack, decay, sustain, and release start times
+    float attackStart = noteStart;
+    float decayStart = attackStart + attackTime;
+    float sustainStart = decayStart + decayTime;
+    float releaseStart = sustainStart + sustainTime;
+    
+    // Apply the envelope to the sample
+    if (elapsedTime >= attackStart && elapsedTime < decayStart) {
+        sample *= (attackVolume/attackTime)*(elapsedTime - attackStart);
+    }
+    else if (elapsedTime >= decayStart && elapsedTime < sustainStart) {
+        sample *= (decayVolume/decayTime)*(elapsedTime - decayStart) + attackVolume;
+    }
+    else if (elapsedTime >= sustainStart && elapsedTime < releaseStart) {
+        sample *= sustainVolume;
+    }
+    else if (elapsedTime >= releaseStart && elapsedTime < noteEnd) {
+        sample *= (releaseVolume/releaseTime)*(elapsedTime - releaseStart) + sustainVolume;
+    }
+    else {
+        sample = 0;
+    }
     return sample;
 }
 
