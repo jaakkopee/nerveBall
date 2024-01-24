@@ -310,25 +310,25 @@ nerveBall::BallNetwork::BallNetwork()
     this->soundOutput = SoundOutput();
     this->soundOutput.open();
     this->synths = std::vector<Synth*>();
-    Note note1 = Note("C5", 0.036, 1);
-    Note note2 = Note ("G5", 0.036, 1);
-    Note note3 = Note ("C6", 0.036, 1);
+    Note note1 = Note("C5", 0.1, 1);
+    Note note2 = Note ("G5", 0.1, 1);
+    Note note3 = Note ("C6", 0.1, 1);
     Sequence sequence1 = Sequence({note1, note2, note3});
-    Note note4 = Note ("D5", 0.036, 1);
-    Note note5 = Note ("A5", 0.036, 1);
-    Note note6 = Note ("D6", 0.036, 1);
+    Note note4 = Note ("D5", 0.1, 1);
+    Note note5 = Note ("A5", 0.1, 1);
+    Note note6 = Note ("D6", 0.1, 1);
     Sequence sequence2 = Sequence({note4, note5, note6});
-    Note note7 = Note ("E5", 0.036, 1);
-    Note note8 = Note ("B5", 0.036, 1);
-    Note note9 = Note ("E6", 0.036, 1);
+    Note note7 = Note ("E5", 0.1, 1);
+    Note note8 = Note ("B5", 0.1, 1);
+    Note note9 = Note ("E6", 0.1, 1);
     Sequence sequence3 = Sequence({note7, note8, note9});
-    Note note10 = Note ("F5", 0.036, 1);
-    Note note11 = Note ("C6", 0.036, 1);
-    Note note12 = Note ("F6", 0.036, 1);
+    Note note10 = Note ("F5", 0.1, 1);
+    Note note11 = Note ("C6", 0.1, 1);
+    Note note12 = Note ("F6", 0.1, 1);
     Sequence sequence4 = Sequence({note10, note11, note12});
-    Note note13 = Note ("G5", 0.036, 1);
-    Note note14 = Note ("D6", 0.036, 1);
-    Note note15 = Note ("G6", 0.036, 1);
+    Note note13 = Note ("G5", 0.1, 1);
+    Note note14 = Note ("D6", 0.1, 1);
+    Note note15 = Note ("G6", 0.1, 1);
     Sequence sequence5 = Sequence({note13, note14, note15});
     this->synths.push_back(new Synth(sequence1, this->soundOutput));
     this->synths.push_back(new Synth(sequence2, this->soundOutput));
@@ -513,8 +513,19 @@ void nerveBall::BallNetwork::divideBall(Ball* ball, Player* player, sf::RenderWi
 
 void nerveBall::BallNetwork::playSound(int index)
 {
-    this->synths[index]->setVolume(0.7);
-    std::this_thread::sleep_for(std::chrono::milliseconds(300));
+    //fade in
+    for(int i = 0; i < 100; i++)
+    {
+        this->synths[index]->setVolume(i/100.0);
+        std::this_thread::sleep_for(std::chrono::milliseconds(2));
+    }
+    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+    //fade out
+    for(int i = 100; i > 0; i--)
+    {
+        this->synths[index]->setVolume(i/100.0);
+        std::this_thread::sleep_for(std::chrono::milliseconds(2));
+    }
     this->synths[index]->setVolume(0);
 }
 
