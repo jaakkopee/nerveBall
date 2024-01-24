@@ -8,20 +8,16 @@ Note::Note() {
     note = "A4";
     duration = 1;
     volume = 1;
-    setFrequency();
+    frequency = noteToFreq[note];
 }
 
 Note::Note(std::string note, double duration, double volume) {
     this->note = note;
     this->duration = duration;
     this->volume = volume;
-    setFrequency();
+    this->frequency = noteToFreq[note];
+    std::cout << this->frequency << " " << this->note << std::endl;
 }
-
-void Note::setFrequency() {
-    frequency = noteToFreq[note];
-}
-
 // an oscillator class
 
 Oscillator::Oscillator() {
@@ -45,6 +41,7 @@ Oscillator::Oscillator(double carrierFrequency, double carrierPhase, double carr
 void Oscillator::setFrequency(double frequency) {
     carrierFrequency = frequency;
     modulatorFrequency = carrierFrequency*2;
+    //std::cout << carrierFrequency << " " << modulatorFrequency << std::endl;
 }
 
 void Oscillator::setPhase(double phase) {
@@ -82,8 +79,7 @@ Sequence::Sequence(std::vector<Note> notes) {
     this->notes = notes;
     Oscillator oscillator;
     oscillators.push_back(oscillator);
-    std::thread thread = std::thread(&Sequence::sequenceThread, this);
-    thread.detach();
+    this->startTime = std::chrono::high_resolution_clock::now();
 }
 
 void Sequence::add(Note note) {
@@ -98,24 +94,24 @@ void Sequence::clear() {
     notes.clear();
 }
 
-std::mutex mtx;
-void Sequence::sequenceThread() {
-    int noteIndex = 0;
-    while (isRunning) {
-        mtx.lock();
-        if (noteIndex >= notes.size()) {
-            noteIndex = 0;
-        }
-        oscillators[0].setFrequency(notes[noteIndex].frequency);
-        oscillators[0].setAmplitude(notes[noteIndex].volume);
-        noteIndex++;
-        mtx.unlock();
-        std::this_thread::sleep_for(std::chrono::milliseconds((int)(notes[noteIndex].duration * 1000)));
-    }
-}
-
 float Sequence::getSample(unsigned int sampleRate){
     float sample = 0;
+    // Calculate the current time in seconds
+    auto currentTime = std::chrono::high_resolution_clock::now();
+    float elapsedTime = std::chrono::duration<float>(currentTime - startTime).count();
+    // Calculate the current note index based on the elapsed time and the note durations
+    int noteIndex = 0;
+    float noteStartTime = 0;
+    for (int i = 0; i < notes.size(); i++) {
+        if (elapsedTime >= noteStartTime) {
+            noteIndex = i;
+        }
+        noteStartTime += notes[i].duration;
+    }
+    // Update the oscillator's frequency and amplitude
+    oscillators[0].setFrequency(notes[noteIndex].frequency);
+    oscillators[0].setAmplitude(notes[noteIndex].volume);
+    // Generate the sample
     for (int i = 0; i < oscillators.size(); i++) {
         sample += oscillators[i].getSample(sampleRate);
     }
@@ -177,6 +173,8 @@ Synth::Synth() {
 Synth::Synth(Sequence sequence, SoundOutput soundOutput) {
     this->sequence = sequence;
     this->soundOutput = soundOutput;
+    std::thread thread = std::thread(&Synth::play, this);
+    thread.detach();
 }
 
 Synth::~Synth() {
@@ -184,19 +182,13 @@ Synth::~Synth() {
 
 void Synth::play() {
     float buffer[soundOutput.bufferSize];
-    for (int i = 0; i < soundOutput.bufferSize; i++) {
-        buffer[i] = sequence.getSample(soundOutput.sampleRate);
-    }
-    soundOutput.write(buffer, soundOutput.bufferSize);
-}
-
-std::mutex mtx2;
-void audioThread(Synth* synth) {
     while (isRunning) {
-        mtx2.lock();
-        synth->play();
-        mtx2.unlock();
+        for (int i = 0; i < soundOutput.bufferSize; i++) {
+            buffer[i] = sequence.getSample(soundOutput.sampleRate);
+        }
+        soundOutput.write(buffer, soundOutput.bufferSize);
     }
+    soundOutput.close();
 }
 
 void Synth::stop() {
@@ -213,16 +205,9 @@ void Synth::setSoundOutput(SoundOutput soundOutput) {
 
 
 int main() {
-    Sequence sequence;
-    sequence.add(Note{"A4", 1, 1});
-    sequence.add(Note{"A2", 1, 1});
-    sequence.add(Note{"A3", 1, 1});
-    sequence.add(Note{"A4", 1, 1});
-    Synth synth(sequence, SoundOutput());
     isRunning = true;
-    std::thread thread = std::thread(audioThread, &synth);
-    thread.detach();
-    std::this_thread::sleep_for(std::chrono::seconds(5));
+    Sequence sequence({Note("G2", 0.3, 1), Note ("C4", 0.3, 1), Note ("E4", 0.3, 1)});
+    Synth synth(sequence, SoundOutput());
+    std::this_thread::sleep_for(std::chrono::seconds(10));
     synth.stop();
-    return 0;
 }

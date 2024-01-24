@@ -159,6 +159,7 @@ class Sequence {
     public:
         std::vector<Note> notes;
         std::vector<Oscillator> oscillators;
+        std::chrono::_V2::system_clock::time_point startTime;
         Sequence();
         Sequence(std::vector<Note> notes);
         void add(Note note);
