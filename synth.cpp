@@ -149,8 +149,6 @@ SoundOutput::SoundOutput() {
     periodSize = 1024;
     periodCount = 2;
     latency = 500000;
-
-    open();
 }
 
 void SoundOutput::open() {
