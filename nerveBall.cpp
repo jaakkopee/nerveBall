@@ -326,20 +326,20 @@ nerveBall::BallNetwork::BallNetwork()
     Note note11 = Note ("E7", 0.03, 1);
     Note note12 = Note ("G7", 0.03, 1);
     Sequence sequence4 = Sequence({note10, note11, note12});
-    Synth* synth1 = new Synth(sequence1, this->soundOutput);
-    Synth* synth2 = new Synth(sequence2, this->soundOutput);
-    Synth* synth3 = new Synth(sequence3, this->soundOutput);
-    Synth* synth4 = new Synth(sequence4, this->soundOutput);
-    this->synths.push_back(synth1);
-    this->synths.push_back(synth2);
-    this->synths.push_back(synth3);
-    this->synths.push_back(synth4);
+    Note note13 = Note ("C8", 0.03, 1);
+    Note note14 = Note ("E8", 0.03, 1);
+    Note note15 = Note ("G8", 0.03, 1);
+    Sequence sequence5 = Sequence({note13, note14, note15});
+    this->synths.push_back(new Synth(sequence1, this->soundOutput));
+    this->synths.push_back(new Synth(sequence2, this->soundOutput));
+    this->synths.push_back(new Synth(sequence3, this->soundOutput));
+    this->synths.push_back(new Synth(sequence4, this->soundOutput));
+    this->synths.push_back(new Synth(sequence5, this->soundOutput));
     //set volumes to zero
     for(int i = 0; i < this->synths.size(); i++)
     {
         this->synths[i]->setVolume(0);
     }
-
 }
 
 void nerveBall::BallNetwork::update()
@@ -430,10 +430,36 @@ void nerveBall::gameOver()
 
 void nerveBall::BallNetwork::divideBall(Ball* ball, Player* player, sf::RenderWindow& window)
 {
-    if (ball->radius < 5)
+
+    //play a sound
+    if (ball->radius == 15)
+    {
+        std::thread thread = std::thread(&nerveBall::BallNetwork::playSound, this, 0);
+        thread.detach();
+    }
+    if (ball->radius == 12)
+    {
+        std::thread thread = std::thread(&nerveBall::BallNetwork::playSound, this, 1);
+        thread.detach();
+    }
+    if (ball->radius == 9)
+    {
+        std::thread thread = std::thread(&nerveBall::BallNetwork::playSound, this, 2);
+        thread.detach();
+    }
+    if (ball->radius == 6)
     {
         std::thread thread = std::thread(&nerveBall::BallNetwork::playSound, this, 3);
         thread.detach();
+    }
+    if (ball->radius == 3)
+    {
+        std::thread thread = std::thread(&nerveBall::BallNetwork::playSound, this, 4);
+        thread.detach();
+    }
+
+    if (ball->radius < 5)
+    {
         this->removeBall(ball);
         player->setLives(player->getLives() + 1);
         int addToScore = (int)(helper::length(ball->velocity)*3000.0/ball->radius);
@@ -454,18 +480,6 @@ void nerveBall::BallNetwork::divideBall(Ball* ball, Player* player, sf::RenderWi
     sf::Vector2f velocity = ball->getVelocity();
 
     double radius = ball->radius-3;
-    if (radius==12){
-        std::thread thread = std::thread(&nerveBall::BallNetwork::playSound, this, 0);
-        thread.detach();
-    }
-    if (radius==9){
-        std::thread thread = std::thread(&nerveBall::BallNetwork::playSound, this, 1);
-        thread.detach();
-    }
-    if (radius==6){
-        std::thread thread = std::thread(&nerveBall::BallNetwork::playSound, this, 2);
-        thread.detach();
-    }
 
     sf::Color color = ball->getColor();
     color.r -= 50;
