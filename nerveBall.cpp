@@ -513,9 +513,9 @@ void nerveBall::BallNetwork::divideBall(Ball* ball, Player* player, sf::RenderWi
 
 void nerveBall::BallNetwork::playSound(int index)
 {
-    this->synths[index]->volume = 1;
+    this->synths[index]->setVolume(0.7);
     std::this_thread::sleep_for(std::chrono::milliseconds(300));
-    this->synths[index]->volume = 0;
+    this->synths[index]->setVolume(0);
 }
 
 void nerveBall::BallNetwork::backPropagate()
