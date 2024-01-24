@@ -79,7 +79,6 @@ Sequence::Sequence(std::vector<Note> notes) {
     this->notes = notes;
     Oscillator oscillator;
     oscillators.push_back(oscillator);
-    this->startTime = std::chrono::high_resolution_clock::now();
 }
 
 void Sequence::add(Note note) {
@@ -96,26 +95,48 @@ void Sequence::clear() {
 
 float Sequence::getSample(unsigned int sampleRate){
     float sample = 0;
+    
     // Calculate the current time in seconds
     auto currentTime = std::chrono::high_resolution_clock::now();
     float elapsedTime = std::chrono::duration<float>(currentTime - startTime).count();
+    
     // Calculate the current note index based on the elapsed time and the note durations
     int noteIndex = 0;
     float noteStartTime = 0;
     for (int i = 0; i < notes.size(); i++) {
-        if (elapsedTime >= noteStartTime) {
+        if (elapsedTime >= noteStartTime && elapsedTime < noteStartTime + notes[i].duration) {
             noteIndex = i;
+            break;
         }
         noteStartTime += notes[i].duration;
     }
+    
     // Update the oscillator's frequency and amplitude
     oscillators[0].setFrequency(notes[noteIndex].frequency);
     oscillators[0].setAmplitude(notes[noteIndex].volume);
+    
     // Generate the sample
     for (int i = 0; i < oscillators.size(); i++) {
         sample += oscillators[i].getSample(sampleRate);
     }
     return sample;
+}
+
+void Sequence::updateSequence() {
+    // Calculate the current time in seconds
+    auto currentTime = std::chrono::high_resolution_clock::now();
+    float elapsedTime = std::chrono::duration<float>(currentTime - startTime).count();
+    
+    // Calculate the total duration of the sequence
+    float totalDuration = 0;
+    for (const auto& note : notes) {
+        totalDuration += note.duration;
+    }
+    
+    // If the sequence has finished playing, reset startTime and noteIndex
+    if (elapsedTime >= totalDuration) {
+        startTime = currentTime;
+    }
 }
 
 //alsa sound output
@@ -182,9 +203,11 @@ Synth::~Synth() {
 
 void Synth::play() {
     float buffer[soundOutput.bufferSize];
+    this->sequence.startTime = std::chrono::high_resolution_clock::now();
     while (isRunning) {
         for (int i = 0; i < soundOutput.bufferSize; i++) {
             buffer[i] = sequence.getSample(soundOutput.sampleRate);
+            sequence.updateSequence();
         }
         soundOutput.write(buffer, soundOutput.bufferSize);
     }

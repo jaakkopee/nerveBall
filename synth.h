@@ -167,6 +167,7 @@ class Sequence {
         void clear();
         void sequenceThread();
         float getSample(unsigned int sampleRate);
+        void updateSequence();
 };
 
 //alsa sound output
