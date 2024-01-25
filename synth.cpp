@@ -24,7 +24,7 @@ Oscillator::Oscillator() {
     carrierFrequency = 440;
     carrierPhase = 0;
     carrierAmplitude = 1;
-    modulatorFrequency = carrierFrequency*1.5;
+    modulatorFrequency = carrierFrequency*1.333;
     modulatorPhase = 0;
     modulatorAmplitude = carrierAmplitude/1.25;
 }
@@ -40,7 +40,7 @@ Oscillator::Oscillator(double carrierFrequency, double carrierPhase, double carr
 
 void Oscillator::setFrequency(double frequency) {
     carrierFrequency = frequency;
-    modulatorFrequency = carrierFrequency*1.5;
+    modulatorFrequency = carrierFrequency*1.333;
     //std::cout << carrierFrequency << " " << modulatorFrequency << std::endl;
 }
 
@@ -51,7 +51,7 @@ void Oscillator::setPhase(double phase) {
 
 void Oscillator::setAmplitude(double amplitude) {
     carrierAmplitude = amplitude;
-    modulatorAmplitude = amplitude/1.5;
+    modulatorAmplitude = amplitude/1.25;
 }
 
 float Oscillator::getSample(unsigned int sampleRate) {
