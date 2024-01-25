@@ -26,7 +26,7 @@ Oscillator::Oscillator() {
     carrierAmplitude = 1;
     modulatorFrequency = carrierFrequency*1.5;
     modulatorPhase = 0;
-    modulatorAmplitude = carrierAmplitude/1.5;
+    modulatorAmplitude = carrierAmplitude/1.25;
 }
 
 Oscillator::Oscillator(double carrierFrequency, double carrierPhase, double carrierAmplitude, double modulatorFrequency, double modulatorPhase, double modulatorAmplitude) {
