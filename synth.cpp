@@ -2,6 +2,7 @@
 #include <iostream>
 #include <mutex>
 
+
 //a note class
 
 Note::Note() {
