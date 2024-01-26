@@ -59,6 +59,7 @@ class Sequence {
         void sequenceThread();
         float getSample(unsigned int sampleRate);
         void updateSequence();
+        void reset();
         float applyEnvelope(float sample, unsigned int sampleRate);
 };
 

@@ -221,6 +221,10 @@ void Sequence::updateSequence() {
     }
 }
 
+void Sequence::reset() {
+    startTime = std::chrono::high_resolution_clock::now();
+}
+
 //alsa sound output
 
 SoundOutput::SoundOutput() {
