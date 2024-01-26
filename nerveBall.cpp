@@ -525,19 +525,11 @@ void nerveBall::BallNetwork::playSound(int index)
 {
     //reset sequence
     this->synths[index]->sequence.reset();
-    //fade in
-    for(int i = 0; i < 100; i++)
-    {
-        this->synths[index]->setVolume(i/100.0);
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
-    }
-    std::this_thread::sleep_for(std::chrono::milliseconds(200));
-    //fade out
-    for(int i = 100; i > 0; i--)
-    {
-        this->synths[index]->setVolume(i/100.0);
-        std::this_thread::sleep_for(std::chrono::milliseconds(1));
-    }
+    //set volume to 1
+    this->synths[index]->setVolume(1);
+    //wait for 0.5 seconds
+    std::this_thread::sleep_for(std::chrono::milliseconds(900));
+    //set volume to 0
     this->synths[index]->setVolume(0);
 }
 
