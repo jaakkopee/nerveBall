@@ -26,7 +26,7 @@ Oscillator::Oscillator() {
     carrierAmplitude = 1;
     modulatorFrequency = carrierFrequency*1.333;
     modulatorPhase = 0;
-    modulatorAmplitude = carrierAmplitude/1.25;
+    modulatorAmplitude = carrierAmplitude/2;
 }
 
 Oscillator::Oscillator(double carrierFrequency, double carrierPhase, double carrierAmplitude, double modulatorFrequency, double modulatorPhase, double modulatorAmplitude) {
@@ -51,7 +51,7 @@ void Oscillator::setPhase(double phase) {
 
 void Oscillator::setAmplitude(double amplitude) {
     carrierAmplitude = amplitude;
-    modulatorAmplitude = amplitude/1.25;
+    modulatorAmplitude = amplitude/2;
 }
 
 float Oscillator::getSample(unsigned int sampleRate) {
@@ -77,8 +77,13 @@ Sequence::Sequence() {
 
 Sequence::Sequence(std::vector<Note> notes) {
     this->notes = notes;
-    Oscillator oscillator;
-    oscillators.push_back(oscillator);
+    this->oscIndex = 0;
+    // Create 8 oscillators for multitimbral synthesis
+    for (int i = 0; i < 8; i++) {
+        Oscillator oscillator;
+        oscillators.push_back(oscillator);
+    }
+
 }
 
 void Sequence::add(Note note) {
@@ -112,12 +117,22 @@ float Sequence::getSample(unsigned int sampleRate){
     }
     
     // Update the oscillator's frequency and amplitude
-    oscillators[0].setFrequency(notes[noteIndex].frequency);
-    oscillators[0].setAmplitude(notes[noteIndex].volume);
+    oscillators[oscIndex].setFrequency(notes[noteIndex].frequency);
+    oscillators[oscIndex].setAmplitude(notes[noteIndex].volume);
     
     // Generate the sample
     for (int i = 0; i < oscillators.size(); i++) {
-        sample += oscillators[i].getSample(sampleRate);
+        if (i == oscIndex) {
+            sample += oscillators[i].getSample(sampleRate);
+        }
+        else {
+            oscillators[i].getSample(sampleRate);
+        }
+    }
+
+    oscIndex++;
+    if (oscIndex >= oscillators.size()) {
+        oscIndex = 0;
     }
     return applyEnvelope(sample, sampleRate);
 }
