@@ -100,20 +100,18 @@ void Sequence::clear() {
 }
 
 float Sequence::getSample(unsigned int sampleRate){
-    float sample = 0;
+    // Only generate a sample from the current oscillator
+    float sample = oscillators[oscIndex].getSample(sampleRate);
+    //run getSample on all oscillators except the current one
     for (int i = 0; i < oscillators.size(); i++) {
-        if (i == oscIndex) {
-            sample += oscillators[i].getSample(sampleRate);
-        }
-        else {
+        if (i != oscIndex) {
             oscillators[i].getSample(sampleRate);
         }
     }
 
-    oscIndex++;
-    if (oscIndex >= oscillators.size()) {
-        oscIndex = 0;
-    }
+    // Increment oscIndex and wrap it around if it exceeds the size of oscillators
+    oscIndex = (oscIndex + 1) % oscillators.size();
+
     return applyEnvelope(sample, sampleRate);
 }
 
@@ -132,7 +130,7 @@ std::vector<float> Sequence::playSequenceOnce(unsigned int sampleRate) {
     
     // Initialize the buffer index
     int bufferIndex = 0;
-
+    //oscIndex = 0;
     // Iterate over each note in the sequence
     for (const auto& note : notes) {
         // Calculate the number of samples for this note
