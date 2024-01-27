@@ -118,13 +118,6 @@ float Sequence::getSample(unsigned int sampleRate){
 }
 
 std::vector<float> Sequence::playSequenceOnce(unsigned int sampleRate) {
-    // set frequency and amplitude of oscillators
-    for (int i = 0; i < oscillators.size(); i++) {
-        for (int j = 0; j < notes.size(); j++) {
-            oscillators[i].setFrequency(notes[j].frequency);
-            oscillators[i].setAmplitude(notes[j].volume);
-        }
-    }
     // Calculate the total duration of the sequence
     float totalDuration = 0;
     for (const auto& note : notes) {
@@ -139,6 +132,17 @@ std::vector<float> Sequence::playSequenceOnce(unsigned int sampleRate) {
     
     // Generate the samples
     for (int i = 0; i < totalSamples; i++) {
+        if (noteIndex < notes.size()) {
+            // set frequency and amplitude of current oscillator
+            oscillators[oscIndex].setFrequency(notes[noteIndex].frequency);
+            oscillators[oscIndex].setAmplitude(notes[noteIndex].volume);
+        }
+        else {
+            // set frequency and amplitude of current oscillator
+            oscillators[oscIndex].setFrequency(0);
+            oscillators[oscIndex].setAmplitude(0);
+        }
+        
         buffer[i] = getSample(sampleRate);
         updateSequence();
     }
@@ -174,18 +178,42 @@ float Sequence::applyEnvelope(float sample, unsigned int sampleRate) {
         noteStart += notes[i].duration;
     }
     float noteEnd = noteStart + notes[noteIndex].duration;
+    //initialize envelope variables
+    float attackTime;
+    float decayTime;
+    float sustainTime;
+    float releaseTime;
+    float attackVolume;
+    float decayVolume;
+    float sustainVolume;
+    float releaseVolume;
     
-    // Calculate the current note's attack, decay, sustain, and release times
-    float attackTime = notes[noteIndex].duration/10;
-    float decayTime = notes[noteIndex].duration/10;
-    float sustainTime = notes[noteIndex].duration/2;
-    float releaseTime = notes[noteIndex].duration/10;
-    
-    // Calculate the current note's attack, decay, sustain, and release volumes
-    float attackVolume = notes[noteIndex].volume;
-    float decayVolume = notes[noteIndex].volume/2;
-    float sustainVolume = notes[noteIndex].volume/2;
-    float releaseVolume = 0;
+    if (noteIndex < notes.size()) {
+        // Calculate the current note's attack, decay, sustain, and release times
+        attackTime = notes[noteIndex].duration/10;
+        decayTime = notes[noteIndex].duration/10;
+        sustainTime = notes[noteIndex].duration/2;
+        releaseTime = notes[noteIndex].duration/10;
+        
+        // Calculate the current note's attack, decay, sustain, and release volumes
+        attackVolume = notes[noteIndex].volume;
+        decayVolume = notes[noteIndex].volume/2;
+        sustainVolume = notes[noteIndex].volume/2;
+        releaseVolume = 0;
+    }
+    else {
+        // Calculate the current note's attack, decay, sustain, and release times
+        attackTime = 0;
+        decayTime = 0;
+        sustainTime = 0;
+        releaseTime = 0;
+        
+        // Calculate the current note's attack, decay, sustain, and release volumes
+        attackVolume = 0;
+        decayVolume = 0;
+        sustainVolume = 0;
+        releaseVolume = 0;
+    }
     
     // Calculate the current note's attack, decay, sustain, and release start times
     float attackStart = noteStart;
