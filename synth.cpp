@@ -130,21 +130,22 @@ std::vector<float> Sequence::playSequenceOnce(unsigned int sampleRate) {
     // Create a buffer to store the samples
     std::vector<float> buffer(totalSamples);
     
-    // Generate the samples
-    for (int i = 0; i < totalSamples; i++) {
-        if (noteIndex < notes.size()) {
-            // set frequency and amplitude of current oscillator
-            oscillators[oscIndex].setFrequency(notes[noteIndex].frequency);
-            oscillators[oscIndex].setAmplitude(notes[noteIndex].volume);
+    // Initialize the buffer index
+    int bufferIndex = 0;
+
+    // Iterate over each note in the sequence
+    for (const auto& note : notes) {
+        // Calculate the number of samples for this note
+        int noteSamples = note.duration * sampleRate;
+
+        // Set frequency and amplitude of current oscillator
+        oscillators[oscIndex].setFrequency(note.frequency);
+        oscillators[oscIndex].setAmplitude(note.volume);
+
+        // Generate the samples for this note
+        for (int i = 0; i < noteSamples; i++) {
+            buffer[bufferIndex++] = getSample(sampleRate);
         }
-        else {
-            // set frequency and amplitude of current oscillator
-            oscillators[oscIndex].setFrequency(0);
-            oscillators[oscIndex].setAmplitude(0);
-        }
-        
-        buffer[i] = getSample(sampleRate);
-        updateSequence();
     }
     
     return buffer;
@@ -187,7 +188,7 @@ float Sequence::applyEnvelope(float sample, unsigned int sampleRate) {
     float decayVolume;
     float sustainVolume;
     float releaseVolume;
-    
+
     if (noteIndex < notes.size()) {
         // Calculate the current note's attack, decay, sustain, and release times
         attackTime = notes[noteIndex].duration/10;
@@ -340,6 +341,12 @@ void Synth::play() {
     float buffer[soundOutput.bufferSize];
     this->sequence.startTime = std::chrono::high_resolution_clock::now();
     std::vector<float> samples = sequence.playSequenceOnce(soundOutput.sampleRate);
+    // zero pad samples to make sure it is a multiple of bufferSize
+    int numSamples = samples.size();
+    int numZeros = soundOutput.bufferSize - (numSamples % soundOutput.bufferSize);
+    for (int i = 0; i < numZeros; i++) {
+        samples.push_back(0);
+    }
     //split samples into chunks of size bufferSize and write them to the sound card
     for (int i = 0; i < samples.size(); i += soundOutput.bufferSize) {
         for (int j = 0; j < soundOutput.bufferSize; j++) {
@@ -475,11 +482,30 @@ std::unordered_map<std::string, double> noteToFreq ={
 bool isRunning = true;
 
 /*
-int main() {
-    isRunning = true;
-    Sequence sequence({Note("G2", 0.03, 1), Note ("C4", 0.03, 1), Note ("E4", 0.03, 1)});
-    Synth synth(sequence, SoundOutput());
-    std::this_thread::sleep_for(std::chrono::seconds(10));
-    synth.stop();
+int main(){
+    // Create a sequence
+    Note note1("C4", 0.2, 1);
+    Note note2("E4", 0.2, 1);
+    Note note3("G4", 0.2, 1);
+    Note note4("C5", 0.2, 1);
+    Note note5("G4", 0.2, 1);
+    Note note6("E4", 0.2, 1);
+
+    Sequence sequence = Sequence({note1, note2, note3, note4, note5, note6});
+
+    // Create a sound output
+    SoundOutput soundOutput;
+    soundOutput.open();
+
+    // Create a synth
+    Synth synth = Synth(sequence, soundOutput);
+    synth.setVolume(1);
+
+    // Play the sequence
+    synth.play();
+
+    // Close the sound output
+    soundOutput.close();
+    return 0;
 }
 */
