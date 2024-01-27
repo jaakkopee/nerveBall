@@ -101,27 +101,6 @@ void Sequence::clear() {
 
 float Sequence::getSample(unsigned int sampleRate){
     float sample = 0;
-    
-    // Calculate the current time in seconds
-    auto currentTime = std::chrono::high_resolution_clock::now();
-    float elapsedTime = std::chrono::duration<float>(currentTime - startTime).count();
-    
-    // Calculate the current note index based on the elapsed time and the note durations
-    int noteIndex = 0;
-    float noteStartTime = 0;
-    for (int i = 0; i < notes.size(); i++) {
-        if (elapsedTime >= noteStartTime && elapsedTime < noteStartTime + notes[i].duration) {
-            noteIndex = i;
-            break;
-        }
-        noteStartTime += notes[i].duration;
-    }
-    
-    // Update the oscillator's frequency and amplitude
-    oscillators[oscIndex].setFrequency(notes[noteIndex].frequency);
-    oscillators[oscIndex].setAmplitude(notes[noteIndex].volume);
-    
-    // Generate the sample
     for (int i = 0; i < oscillators.size(); i++) {
         if (i == oscIndex) {
             sample += oscillators[i].getSample(sampleRate);
@@ -138,6 +117,35 @@ float Sequence::getSample(unsigned int sampleRate){
     return applyEnvelope(sample, sampleRate);
 }
 
+std::vector<float> Sequence::playSequenceOnce(unsigned int sampleRate) {
+    // set frequency and amplitude of oscillators
+    for (int i = 0; i < oscillators.size(); i++) {
+        for (int j = 0; j < notes.size(); j++) {
+            oscillators[i].setFrequency(notes[j].frequency);
+            oscillators[i].setAmplitude(notes[j].volume);
+        }
+    }
+    // Calculate the total duration of the sequence
+    float totalDuration = 0;
+    for (const auto& note : notes) {
+        totalDuration += note.duration;
+    }
+    
+    // Calculate the total number of samples in the sequence
+    int totalSamples = totalDuration*sampleRate;
+    
+    // Create a buffer to store the samples
+    std::vector<float> buffer(totalSamples);
+    
+    // Generate the samples
+    for (int i = 0; i < totalSamples; i++) {
+        buffer[i] = getSample(sampleRate);
+        updateSequence();
+    }
+    
+    return buffer;
+}
+
 float Sequence::applyEnvelope(float sample, unsigned int sampleRate) {
     // Calculate the current time in seconds
     auto currentTime = std::chrono::high_resolution_clock::now();
@@ -150,7 +158,7 @@ float Sequence::applyEnvelope(float sample, unsigned int sampleRate) {
     }
     
     // Calculate the current note index based on the elapsed time and the note durations
-    int noteIndex = 0;
+    noteIndex = 0;
     float noteStartTime = 0;
     for (int i = 0; i < notes.size(); i++) {
         if (elapsedTime >= noteStartTime && elapsedTime < noteStartTime + notes[i].duration) {
@@ -218,6 +226,17 @@ void Sequence::updateSequence() {
     // If the sequence has finished playing, reset startTime and noteIndex
     if (elapsedTime >= totalDuration) {
         startTime = currentTime;
+        noteIndex = 0;  // Reset noteIndex
+    } else {
+        // Update noteIndex based on elapsedTime
+        float noteStartTime = 0;
+        for (int i = 0; i < notes.size(); i++) {
+            if (elapsedTime >= noteStartTime && elapsedTime < noteStartTime + notes[i].duration) {
+                noteIndex = i;
+                break;
+            }
+            noteStartTime += notes[i].duration;
+        }
     }
 }
 
@@ -280,8 +299,6 @@ Synth::Synth(Sequence sequence, SoundOutput soundOutput) {
     this->sequence = sequence;
     this->soundOutput = soundOutput;
     volume = 1;
-    std::thread thread = std::thread(&Synth::play, this);
-    thread.detach();
 }
 
 Synth::~Synth() {
@@ -294,14 +311,14 @@ void Synth::setVolume(double volume) {
 void Synth::play() {
     float buffer[soundOutput.bufferSize];
     this->sequence.startTime = std::chrono::high_resolution_clock::now();
-    while (isRunning) {
-        for (int i = 0; i < soundOutput.bufferSize; i++) {
-            buffer[i] = this->volume*sequence.getSample(soundOutput.sampleRate);
-            sequence.updateSequence();
+    std::vector<float> samples = sequence.playSequenceOnce(soundOutput.sampleRate);
+    //split samples into chunks of size bufferSize and write them to the sound card
+    for (int i = 0; i < samples.size(); i += soundOutput.bufferSize) {
+        for (int j = 0; j < soundOutput.bufferSize; j++) {
+            buffer[j] = samples[i + j];
         }
         soundOutput.write(buffer, soundOutput.bufferSize);
     }
-    soundOutput.close();
 }
 
 void Synth::stop() {

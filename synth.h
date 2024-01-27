@@ -56,11 +56,12 @@ class Sequence {
         void add(Note note);
         void remove(int index);
         void clear();
-        void sequenceThread();
+        std::vector<float> playSequenceOnce(unsigned int sampleRate);
         float getSample(unsigned int sampleRate);
         void updateSequence();
         void reset();
         float applyEnvelope(float sample, unsigned int sampleRate);
+        int noteIndex;
 };
 
 //alsa sound output
