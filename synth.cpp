@@ -27,7 +27,7 @@ Oscillator::Oscillator() {
     carrierAmplitude = 1;
     modulatorFrequency = carrierFrequency*2;
     modulatorPhase = 0;
-    modulatorAmplitude = carrierAmplitude/2;
+    modulatorAmplitude = carrierAmplitude/4;
 }
 
 Oscillator::Oscillator(double carrierFrequency, double carrierPhase, double carrierAmplitude, double modulatorFrequency, double modulatorPhase, double modulatorAmplitude) {
@@ -52,7 +52,7 @@ void Oscillator::setPhase(double phase) {
 
 void Oscillator::setAmplitude(double amplitude) {
     carrierAmplitude = amplitude;
-    modulatorAmplitude = amplitude/2;
+    modulatorAmplitude = amplitude/4;
 }
 
 float Oscillator::getSample(unsigned int sampleRate) {
