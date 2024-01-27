@@ -528,7 +528,7 @@ void nerveBall::BallNetwork::playSound(int index)
     //set volume to 1
     this->synths[index]->setVolume(1);
     //wait for 0.5 seconds
-    std::this_thread::sleep_for(std::chrono::milliseconds(900));
+    std::this_thread::sleep_for(std::chrono::milliseconds(200));
     //set volume to 0
     this->synths[index]->setVolume(0);
 }
