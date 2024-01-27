@@ -131,6 +131,12 @@ std::vector<float> Sequence::playSequenceOnce(unsigned int sampleRate) {
     // Initialize the buffer index
     int bufferIndex = 0;
     //oscIndex = 0;
+    //reset all oscillators
+    for (int i = 0; i < oscillators.size(); i++) {
+        oscillators[i].setPhase(0);
+        oscillators[i].setAmplitude(0);
+        oscillators[i].setFrequency(0);
+    }
     // Iterate over each note in the sequence
     for (const auto& note : notes) {
         // Calculate the number of samples for this note
