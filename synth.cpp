@@ -485,31 +485,3 @@ std::unordered_map<std::string, double> noteToFreq ={
 
 bool isRunning = true;
 
-/*
-int main(){
-    // Create a sequence
-    Note note1("C4", 0.2, 1);
-    Note note2("E4", 0.2, 1);
-    Note note3("G4", 0.2, 1);
-    Note note4("C5", 0.2, 1);
-    Note note5("G4", 0.2, 1);
-    Note note6("E4", 0.2, 1);
-
-    Sequence sequence = Sequence({note1, note2, note3, note4, note5, note6});
-
-    // Create a sound output
-    SoundOutput soundOutput;
-    soundOutput.open();
-
-    // Create a synth
-    Synth synth = Synth(sequence, soundOutput);
-    synth.setVolume(1);
-
-    // Play the sequence
-    synth.play();
-
-    // Close the sound output
-    soundOutput.close();
-    return 0;
-}
-*/
