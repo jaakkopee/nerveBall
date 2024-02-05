@@ -79,12 +79,16 @@ Sequence::Sequence() {
 Sequence::Sequence(std::vector<Note> notes) {
     this->notes = notes;
     this->oscIndex = 0;
+    this->noteIndex = 0;
     // Create 8 oscillators for multitimbral synthesis
     for (int i = 0; i < 8; i++) {
         Oscillator oscillator;
         oscillators.push_back(oscillator);
     }
 
+}
+
+Sequence::~Sequence() {
 }
 
 void Sequence::add(Note note) {
@@ -326,12 +330,14 @@ Synth::Synth() {
     sequence = Sequence();
     soundOutput = SoundOutput();
     volume = 1;
+    this->playing = true;
 }
 
 Synth::Synth(Sequence sequence, SoundOutput soundOutput) {
     this->sequence = sequence;
     this->soundOutput = soundOutput;
     volume = 1;
+    this->playing = true;
 }
 
 Synth::~Synth() {
@@ -340,8 +346,9 @@ Synth::~Synth() {
 void Synth::setVolume(double volume) {
     this->volume = volume;
 }
-
+std::mutex mtx;
 void Synth::play() {
+    mtx.lock();
     float buffer[soundOutput.bufferSize];
     this->sequence.startTime = std::chrono::high_resolution_clock::now();
     std::vector<float> samples = sequence.playSequenceOnce(soundOutput.sampleRate);
@@ -356,12 +363,17 @@ void Synth::play() {
         for (int j = 0; j < soundOutput.bufferSize; j++) {
             buffer[j] = samples[i + j];
         }
+        if (!this->playing) {
+            break;
+        }
         soundOutput.write(buffer, soundOutput.bufferSize);
     }
+    mtx.unlock();
 }
 
 void Synth::stop() {
-    isRunning = false;
+    this->playing = false;
+    this->sequence.reset();
 }
 
 void Synth::setSequence(Sequence sequence) {
@@ -483,5 +495,4 @@ std::unordered_map<std::string, double> noteToFreq ={
     {"B8", 7902.13}
 };
 
-bool isRunning = true;
 

@@ -204,7 +204,9 @@ namespace nerveBall
     };
 
     bool gameIsOn;
+    bool introIsOn;
     int lastScore;
+    SoundOutput soundOutput;
     void lifeCountThread(Player* player, sf::RenderWindow& window);
     void gameOver();
     double scaleActivation(double activation);

@@ -307,7 +307,7 @@ nerveBall::BallNetwork::BallNetwork()
 {
     this->balls = std::vector<Ball*>();
     this->connections = std::vector<Connection*>();
-    this->soundOutput = SoundOutput();
+    this->soundOutput = nerveBall::soundOutput;
     this->soundOutput.open();
     this->synths = std::vector<Synth*>();
     //create some synths
@@ -697,6 +697,7 @@ int main()
 
     sf::RenderWindow window(sf::VideoMode(800, 600), "Nerve Ball", sf::Style::Close);
     window.setFramerateLimit(60);
+    nerveBall::soundOutput.open();
     nerveBall::BallNetwork network = nerveBall::BallNetwork();
     nerveBall::Player *player1 = new nerveBall::Player();
     nerveBall::lastScore = 0;
@@ -716,11 +717,156 @@ int main()
         }
     }
     nerveBall::gameIsOn = true;
+    nerveBall::introIsOn = true;
     std::thread lifeCount(nerveBall::lifeCountThread, player1, std::ref(window));
     lifeCount.detach();
 
     while(window.isOpen())
     {
+        //intro lane, skip intro lane with space
+        //first create a melody with a synth
+        Note note1 = Note("C3", 1, 1);
+        Note note1_ = Note("C4", 1, 1);
+        Note note2 = Note("E3", 1, 1);
+        Note note2_ = Note("E4", 1, 1);
+        Note note3 = Note("G3", 1, 1);
+        Note note3_ = Note("G4", 1, 1);
+        Note note4 = Note("E2", 1, 1);
+        Note note4_ = Note("E3", 1, 1);
+        Note note5 = Note("G2", 1, 1);
+        Note note5_ = Note("G3", 1, 1);
+        Note note6 = Note("B2", 1, 1);
+        Note note6_ = Note("B3", 1, 1);
+        Note note7 = Note("G2", 1, 1);
+        Note note7_ = Note("G3", 1, 1);
+        Note note8 = Note("B2", 1, 1);
+        Note note8_ = Note("B3", 1, 1);
+        Note note9 = Note("D3", 1, 1);
+        Note note9_ = Note("D4", 1, 1);
+        Note note10 = Note("B2", 1, 1);
+        Note note10_ = Note("B3", 1, 1);
+        Note note11 = Note("D3", 1, 1);
+        Note note11_ = Note("D4", 1, 1);
+        Note note12 = Note("F3", 1, 1);
+        Note note12_ = Note("F4", 1, 1);
+
+
+        Sequence sequence1 = Sequence({note1,
+                                        note1_,
+                                        note2,
+                                        note2_,
+                                        note3,
+                                        note3_,
+                                        note4,
+                                        note4_,
+                                        note5,
+                                        note5_,
+                                        note6,
+                                        note6_,
+                                        note7,
+                                        note7_,
+                                        note8,
+                                        note8_,
+                                        note9,
+                                        note9_,
+                                        note10,
+                                        note10_,
+                                        note11,
+                                        note11_,
+                                        note12,
+                                        note12_});
+
+        Synth synth1 = Synth(sequence1, nerveBall::soundOutput);
+        synth1.setVolume(1);
+        //TODO: fix this
+        //std::thread introAudioThread = std::thread(&Synth::play, &synth1);
+        //introAudioThread.detach();
+        sf::Event introevent;
+        int r = 0;
+        int g = 0;
+        int b = 0;
+        double text0phase = 0;
+        double text1phase = 0;
+        double text2phase = 0;
+        while (nerveBall::introIsOn)
+        {
+            while(window.pollEvent(introevent))
+            {
+                if(introevent.type == sf::Event::Closed)
+                {
+                    synth1.stop();
+                    window.close();
+                    exit(0);
+                }
+                if(introevent.type == sf::Event::KeyPressed)
+                {
+                    if(introevent.key.code == sf::Keyboard::Space)
+                    {
+                        nerveBall::introIsOn = false;
+                        synth1.stop();
+                    }
+                }
+            }
+            window.clear(sf::Color(0, 0, 0));
+            r++;
+            g++;
+            b++;
+            text0phase+=0.01;
+            text1phase+=0.011;
+            text2phase+=0.0111;
+            int modulatorPhase0 = text0phase * 2;
+            int modulatorPhase1 = text1phase * 2;
+            int modulatorPhase2 = text2phase * 2;
+            if (text0phase > 360)
+            {
+                text0phase = 0;
+            }
+            if (text1phase > 360)
+            {
+                text1phase = 0;
+            }
+            if (text2phase > 360)
+            {
+                text2phase = 0;
+            }
+            //position is sin(phase)
+            int text0y = 200 + 100*sin(text0phase + sin(modulatorPhase0));
+            int text1y = 250 + 100*sin(text1phase + sin(modulatorPhase1));
+            int text2y = 300 + 100*sin(text2phase + sin(modulatorPhase2));
+
+
+            sf::Color color0 = sf::Color(r%255, g%255, b%255);
+            sf::Color color1 = sf::Color(255-r%255, 255-g%255, 255-b%255);
+            sf::Color textcolor = sf::Color(255-r%30, 255-g%60, 255-b%90);
+            sf::Color textcolor2 = sf::Color(255-r%160, 255-g%130, 255-b%190);
+            sf::Color textcolor3 = sf::Color(255-r%200, 255-g%160, 255-b%220);
+            sf::RectangleShape rect0 = sf::RectangleShape(sf::Vector2f(400, 300));
+            rect0.setFillColor(color0);
+            rect0.setPosition(0, 0);
+            sf::RectangleShape rect1 = sf::RectangleShape(sf::Vector2f(400, 300));
+            rect1.setFillColor(color1);
+            rect1.setPosition(400, 0);
+            window.draw(rect0);
+            window.draw(rect1);
+
+            sf::Font font;
+
+            font.loadFromFile("/home/jaakko/Koodit/funk_fonts/shagade.ttf");
+            sf::Text introText = sf::Text("Nerve Ball", font, 50);
+            introText.setFillColor(textcolor);
+            introText.setPosition(400 - introText.getLocalBounds().width/2, text0y);
+            window.draw(introText);
+            sf::Text introText2 = sf::Text("Nerve Wrecking, ball splitting action!", font, 20);
+            introText2.setFillColor(textcolor2);
+            introText2.setPosition(400 - introText2.getLocalBounds().width/2, text1y);
+            window.draw(introText2);
+            sf::Text introText3 = sf::Text("Do my balls get on your nerves?", font, 20);
+            introText3.setFillColor(textcolor3);
+            introText3.setPosition(400 - introText3.getLocalBounds().width/2, text2y);
+            window.draw(introText3);
+            window.display();
+        }
+
         if (nerveBall::gameIsOn == false)
         {
             //game over lane
