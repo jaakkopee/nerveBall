@@ -7,6 +7,23 @@
 #include <cmath>
 #include <alsa/asoundlib.h>
 #include <thread>
+#include <chrono>
+#include <SFML/Audio.hpp>
+
+
+//a sound file player class
+class SoundFilePlayer {
+    public:
+        std::string filename;
+        sf::SoundBuffer buffer;
+        sf::Sound sound;
+        SoundFilePlayer();
+        SoundFilePlayer(std::string filename);
+        void load(std::string filename);
+        void play();
+        void stop();
+        void setVolume(float volume);
+};
 
 //note to frequency conversion map
 extern std::unordered_map<std::string, double> noteToFreq;

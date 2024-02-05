@@ -721,66 +721,16 @@ int main()
     std::thread lifeCount(nerveBall::lifeCountThread, player1, std::ref(window));
     lifeCount.detach();
 
+    std::thread audioThread;
+    SoundFilePlayer SFPlayer = SoundFilePlayer();
+    SFPlayer.load("/home/jaakko/Koodit/nerveBall/05_rend01.wav");
+    audioThread = std::thread(&SoundFilePlayer::play, &SFPlayer);
     while(window.isOpen())
     {
         //intro lane, skip intro lane with space
-        //first create a melody with a synth
-        Note note1 = Note("C3", 1, 1);
-        Note note1_ = Note("C4", 1, 1);
-        Note note2 = Note("E3", 1, 1);
-        Note note2_ = Note("E4", 1, 1);
-        Note note3 = Note("G3", 1, 1);
-        Note note3_ = Note("G4", 1, 1);
-        Note note4 = Note("E2", 1, 1);
-        Note note4_ = Note("E3", 1, 1);
-        Note note5 = Note("G2", 1, 1);
-        Note note5_ = Note("G3", 1, 1);
-        Note note6 = Note("B2", 1, 1);
-        Note note6_ = Note("B3", 1, 1);
-        Note note7 = Note("G2", 1, 1);
-        Note note7_ = Note("G3", 1, 1);
-        Note note8 = Note("B2", 1, 1);
-        Note note8_ = Note("B3", 1, 1);
-        Note note9 = Note("D3", 1, 1);
-        Note note9_ = Note("D4", 1, 1);
-        Note note10 = Note("B2", 1, 1);
-        Note note10_ = Note("B3", 1, 1);
-        Note note11 = Note("D3", 1, 1);
-        Note note11_ = Note("D4", 1, 1);
-        Note note12 = Note("F3", 1, 1);
-        Note note12_ = Note("F4", 1, 1);
 
 
-        Sequence sequence1 = Sequence({note1,
-                                        note1_,
-                                        note2,
-                                        note2_,
-                                        note3,
-                                        note3_,
-                                        note4,
-                                        note4_,
-                                        note5,
-                                        note5_,
-                                        note6,
-                                        note6_,
-                                        note7,
-                                        note7_,
-                                        note8,
-                                        note8_,
-                                        note9,
-                                        note9_,
-                                        note10,
-                                        note10_,
-                                        note11,
-                                        note11_,
-                                        note12,
-                                        note12_});
 
-        Synth synth1 = Synth(sequence1, nerveBall::soundOutput);
-        synth1.setVolume(1);
-        //TODO: fix this
-        //std::thread introAudioThread = std::thread(&Synth::play, &synth1);
-        //introAudioThread.detach();
         sf::Event introevent;
         int r = 0;
         int g = 0;
@@ -794,7 +744,10 @@ int main()
             {
                 if(introevent.type == sf::Event::Closed)
                 {
-                    synth1.stop();
+                    SFPlayer.stop();
+                    if (audioThread.joinable()) {
+                        audioThread.join(); // Stop the thread
+                    }
                     window.close();
                     exit(0);
                 }
@@ -802,8 +755,11 @@ int main()
                 {
                     if(introevent.key.code == sf::Keyboard::Space)
                     {
+                        SFPlayer.stop();
+                        if (audioThread.joinable()) {
+                            audioThread.join(); // Stop the thread
+                        }
                         nerveBall::introIsOn = false;
-                        synth1.stop();
                     }
                 }
             }

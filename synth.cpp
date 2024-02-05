@@ -2,6 +2,39 @@
 #include <iostream>
 #include <mutex>
 
+//a sound file player class
+
+SoundFilePlayer::SoundFilePlayer() {
+    filename = "";
+    buffer = sf::SoundBuffer();
+    sound = sf::Sound();
+}
+
+SoundFilePlayer::SoundFilePlayer(std::string filename) {
+    this->filename = filename;
+    buffer = sf::SoundBuffer();
+    sound = sf::Sound();
+    load(filename);
+}
+
+void SoundFilePlayer::load(std::string filename) {
+    if (!buffer.loadFromFile(filename)) {
+        std::cout << "Error loading sound file" << std::endl;
+    }
+    sound.setBuffer(buffer);
+}
+
+void SoundFilePlayer::play() {
+    sound.play();
+}
+
+void SoundFilePlayer::stop() {
+    sound.stop();
+}
+
+void SoundFilePlayer::setVolume(float volume) {
+    sound.setVolume(volume);
+}
 
 //a note class
 
