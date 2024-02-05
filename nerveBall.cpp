@@ -767,8 +767,8 @@ int main()
             text1phase+=0.011;
             text2phase+=0.0111;
             int modulatorPhase0 = text0phase * 2;
-            int modulatorPhase1 = text1phase * 2;
-            int modulatorPhase2 = text2phase * 2;
+            int modulatorPhase1 = text1phase / 2;
+            int modulatorPhase2 = text2phase / 3;
             if (text0phase > 360)
             {
                 text0phase = 0;
@@ -782,9 +782,9 @@ int main()
                 text2phase = 0;
             }
             //position is sin(phase)
-            int text0y = 200 + 100*sin(text0phase + sin(modulatorPhase0));
-            int text1y = 250 + 100*sin(text1phase + sin(modulatorPhase1));
-            int text2y = 300 + 100*sin(text2phase + sin(modulatorPhase2));
+            int text0y = 200 + 100*sin(text0phase + 10*sin(modulatorPhase0));
+            int text1y = 250 + 100*sin(text1phase + 10*sin(modulatorPhase1));
+            int text2y = 300 + 100*sin(text2phase + 10*sin(modulatorPhase2));
 
 
             sf::Color color0 = sf::Color(r%255, g%255, b%255);
