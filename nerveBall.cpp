@@ -727,10 +727,6 @@ int main()
     audioThread = std::thread(&SoundFilePlayer::play, &SFPlayer);
     while(window.isOpen())
     {
-        //intro lane, skip intro lane with space
-
-
-
         sf::Event introevent;
         int r = 0;
         int g = 0;
