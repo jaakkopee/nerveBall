@@ -760,15 +760,15 @@ int main()
                 }
             }
             window.clear(sf::Color(0, 0, 0));
-            r++;
-            g++;
-            b++;
+            r+=2;
+            g+=3;
+            b+=4;
             text0phase+=0.01;
             text1phase+=0.011;
             text2phase+=0.0111;
-            int modulatorPhase0 = text0phase * 2;
-            int modulatorPhase1 = text1phase / 2;
-            int modulatorPhase2 = text2phase / 3;
+            double modulatorPhase0 = text0phase * 2;
+            double modulatorPhase1 = text1phase * 0.8;
+            double modulatorPhase2 = text2phase * 1.2;
             if (text0phase > 360)
             {
                 text0phase = 0;
@@ -789,17 +789,23 @@ int main()
 
             sf::Color color0 = sf::Color(r%255, g%255, b%255);
             sf::Color color1 = sf::Color(255-r%255, 255-g%255, 255-b%255);
-            sf::Color textcolor = sf::Color(255-r%30, 255-g%60, 255-b%90);
-            sf::Color textcolor2 = sf::Color(255-r%160, 255-g%130, 255-b%190);
-            sf::Color textcolor3 = sf::Color(255-r%200, 255-g%160, 255-b%220);
+            sf::Color textcolor = sf::Color(255-r%30, 255-g%60, 255-b%255);
+            sf::Color textcolor2 = sf::Color(255-r%160, 255-g%130, 255-b%255);
+            sf::Color textcolor3 = sf::Color(255-r%200, 255-g%160, 255-b%255);
+            sf::Color circleColor = sf::Color(r%100, g%100, b%255);
+            int circleRadius = 10 + 100*sin(text0phase);
             sf::RectangleShape rect0 = sf::RectangleShape(sf::Vector2f(400, 300));
             rect0.setFillColor(color0);
             rect0.setPosition(0, 0);
             sf::RectangleShape rect1 = sf::RectangleShape(sf::Vector2f(400, 300));
             rect1.setFillColor(color1);
             rect1.setPosition(400, 0);
+            sf::CircleShape circle = sf::CircleShape(circleRadius);
+            circle.setFillColor(circleColor);
+            circle.setPosition(400 - circle.getRadius(), 300 - circle.getRadius());
             window.draw(rect0);
             window.draw(rect1);
+            window.draw(circle);
 
             sf::Font font;
 
