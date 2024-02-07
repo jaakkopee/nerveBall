@@ -426,7 +426,7 @@ void nerveBall::lifeCountThread(Player* player, sf::RenderWindow& window)
     }
 }
 
-void nerveBall::Player::updateLifeCount(Player* player, int lives, sf::RenderWindow& window)
+void nerveBall::Player::updateLifeCount(Player* player, double lives, sf::RenderWindow& window)
 {
     player->setLives(lives);
     if (player->getLives() == 0)
@@ -624,12 +624,12 @@ int nerveBall::Player::getScore()
     return this->score;
 }
 
-void nerveBall::Player::setLives(int lives)
+void nerveBall::Player::setLives(double lives)
 {
     this->lives = lives;
 }
 
-int nerveBall::Player::getLives()
+double nerveBall::Player::getLives()
 {
     return this->lives;
 }
@@ -1191,6 +1191,10 @@ int main()
                         if(network.balls[i]->isClicked(sf::Vector2f(event.mouseButton.x, event.mouseButton.y)))
                         {
                             network.divideBall(network.balls[i], player1, window);
+                        }
+                        else
+                        {
+                            player1->updateLifeCount(player1, player1->getLives() - 0.01, window);
                         }
 
                     }
