@@ -1174,6 +1174,7 @@ int main()
             }
             
         }
+        bool ballWasClicked;
         //handle events
         sf::Event event;
         while(window.pollEvent(event))
@@ -1186,17 +1187,20 @@ int main()
             {
                 if(event.mouseButton.button == sf::Mouse::Left)
                 {
+                    ballWasClicked = false;
+
                     for(int i = 0; i < network.balls.size(); i++)
                     {
                         if(network.balls[i]->isClicked(sf::Vector2f(event.mouseButton.x, event.mouseButton.y)))
                         {
                             network.divideBall(network.balls[i], player1, window);
-                        }
-                        else
-                        {
-                            player1->updateLifeCount(player1, player1->getLives() - 0.01, window);
+                            ballWasClicked = true;
                         }
 
+                    }
+                    
+                    if (ballWasClicked == false){
+                        player1->updateLifeCount(player1, player1->getLives() - 0.01, window);
                     }
                     
                 }
