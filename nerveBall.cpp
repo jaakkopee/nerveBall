@@ -718,10 +718,9 @@ int main()
     }
     nerveBall::gameIsOn = true;
     nerveBall::introIsOn = true;
-    std::thread lifeCount(nerveBall::lifeCountThread, player1, std::ref(window));
-    lifeCount.detach();
 
     std::thread audioThread;
+    std::thread lifeCount;
     SoundFilePlayer SFPlayer = SoundFilePlayer();
     SFPlayer.load("/home/jaakko/Koodit/nerveBall/05_rend01.wav");
     audioThread = std::thread(&SoundFilePlayer::play, &SFPlayer);
@@ -756,7 +755,8 @@ int main()
                             audioThread.join(); // Stop the thread
                         }
                         nerveBall::introIsOn = false;
-                        player1->setLives(5);
+                        lifeCount = std::thread(&nerveBall::lifeCountThread, player1, std::ref(window));
+                        lifeCount.detach();
                     }
                 }
             }
