@@ -756,6 +756,7 @@ int main()
                             audioThread.join(); // Stop the thread
                         }
                         nerveBall::introIsOn = false;
+                        player1->setLives(5);
                     }
                 }
             }
