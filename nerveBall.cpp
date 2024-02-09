@@ -1200,7 +1200,7 @@ int main()
                     }
 
                     if (ballWasClicked == false){
-                        player1->updateLifeCount(player1, player1->getLives() - 0.0333, window);
+                        player1->updateLifeCount(player1, player1->getLives() - 0.05, window);
                     }
                     
                 }
