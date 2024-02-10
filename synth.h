@@ -82,38 +82,16 @@ class Sequence {
         int noteIndex;
 };
 
-//alsa sound output
-
-class SoundOutput {
-    public:
-        unsigned int sampleRate;
-        snd_pcm_uframes_t bufferSize;
-        int channels;
-        snd_pcm_uframes_t periodSize;
-        unsigned int periodCount;
-        int latency;
-        int err;
-        snd_pcm_t* handle;
-        snd_pcm_hw_params_t* params;
-        snd_pcm_uframes_t frames;
-        SoundOutput();
-        SoundOutput(int sampleRate, int bufferSize, int channels);
-        void open();
-        void close();
-        void write(float* buffer, int bufferSize);
-};
-
-//a sound output class implemented with sfml
-
-class SoundOutputSFML : public SoundOutput{
+//a sound output class
+class SoundOutputSFML {
     public:
         sf::SoundBuffer buffer;
         sf::Sound sound;
         SoundOutputSFML();
-        SoundOutputSFML(int sampleRate, int bufferSize, int channels);
-        void open();
-        void close();
-        void write(float* buffer, int bufferSize);
+        void play(std::vector<float> samples, unsigned int sampleRate);
+        void stop();
+        void setVolume(float volume);
+        int sampleRate;
 };
 
 //a synth class
@@ -121,15 +99,15 @@ class SoundOutputSFML : public SoundOutput{
 class Synth {
     public:
         Sequence sequence;
-        SoundOutput soundOutput;
+        SoundOutputSFML soundOutput;
         Synth();
-        Synth(Sequence sequence, SoundOutput soundOutput);
+        Synth(Sequence sequence, SoundOutputSFML soundOutput);
         ~Synth();
         void play();
         void stop();
         void setVolume(double volume);
         void setSequence(Sequence sequence);
-        void setSoundOutput(SoundOutput soundOutput);
+        void setSoundOutput(SoundOutputSFML soundOutput);
         double volume;
         bool playing;
 };

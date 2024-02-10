@@ -314,103 +314,35 @@ void Sequence::reset() {
     startTime = std::chrono::high_resolution_clock::now();
 }
 
-//alsa sound output
-
-SoundOutput::SoundOutput() {
-    sampleRate = 44100;
-    bufferSize = 1024;
-    
-    channels = 1;
-    periodSize = 1024;
-    periodCount = 2;
-    latency = 500000;
-}
-
-void SoundOutput::open() {
-    this->err = snd_pcm_open(&this->handle, "default", SND_PCM_STREAM_PLAYBACK, 0);
-    if (this->err < 0) {
-        std::cout << "Open error: " << snd_strerror(this->err) << std::endl;
-    }
-    snd_pcm_hw_params_alloca(&this->params);
-    snd_pcm_hw_params_any(this->handle, this->params);
-    snd_pcm_hw_params_set_access(this->handle, this->params, SND_PCM_ACCESS_RW_INTERLEAVED);
-    snd_pcm_hw_params_set_format(this->handle, this->params, SND_PCM_FORMAT_FLOAT);
-    snd_pcm_hw_params_set_channels(this->handle, this->params, this->channels);
-    snd_pcm_hw_params_set_rate_near(this->handle, this->params, &this->sampleRate, 0);
-    snd_pcm_hw_params_set_period_size_near(this->handle, this->params, &this->periodSize, 0);
-    snd_pcm_hw_params_set_periods_near(this->handle, this->params, &this->periodCount, 0);
-    this->err = snd_pcm_hw_params(this->handle, this->params);
-    if (this->err < 0) {
-        std::cout << "Hardware setup error: " << snd_strerror(this->err) << std::endl;
-    }
-}
-
-void SoundOutput::write(float* buffer, int bufferSize) {
-    this->err = snd_pcm_writei(this->handle, buffer, bufferSize);
-    if (this->err < 0) {
-        std::cout << "Write error: " << snd_strerror(this->err) << std::endl;
-    }
-}
-
-void SoundOutput::close() {
-    snd_pcm_drain(this->handle);
-    snd_pcm_close(this->handle);
-}
-
 //a sound output class implemented with sfml
 
 SoundOutputSFML::SoundOutputSFML() {
+    sound = sf::Sound();
+    buffer = sf::SoundBuffer();
     sampleRate = 44100;
-    bufferSize = 1024;
-    channels = 1;
-    periodSize = 1024;
-    periodCount = 2;
-    latency = 500000;
-    buffer = sf::SoundBuffer();
-    sound = sf::Sound();
 }
 
-SoundOutputSFML::SoundOutputSFML(int sampleRate, int bufferSize, int channels) {
-    this->sampleRate = sampleRate;
-    this->bufferSize = bufferSize;
-    this->channels = channels;
-    this->periodSize = 1024;
-    this->periodCount = 2;
-    this->latency = 500000;
-    buffer = sf::SoundBuffer();
-    sound = sf::Sound();
-}
-
-void SoundOutputSFML::open() {
-    // Do nothing
-}
-
-void SoundOutputSFML::write(float* buffer, int bufferSize) {
-    // convert float buffer to sf::Int16 buffer
-    sf::Int16* bufferInt16 = new sf::Int16[bufferSize];
-    for (int i = 0; i < bufferSize; i++) {
-        bufferInt16[i] = buffer[i] * 32767;
+void SoundOutputSFML::play(std::vector<float> samples, unsigned int sampleRate) {
+    //convert samples to sf::Int16
+    std::vector<sf::Int16> sfSamples;
+    for (int i = 0; i < samples.size(); i++) {
+        sfSamples.push_back(samples[i]*32767);
     }
-    // Load the buffer with the samples
-    if (!this->buffer.loadFromSamples(bufferInt16, bufferSize, 1, this->sampleRate)) {
-        std::cout << "Error loading sound buffer" << std::endl;
-    }
-}
-
-void SoundOutputSFML::close() {
-    // Do nothing
+    buffer.loadFromSamples(&sfSamples[0], samples.size(), 1, sampleRate);
+    sound.setBuffer(buffer);
+    sound.play();
 }
 
 //a synth class
 
 Synth::Synth() {
     sequence = Sequence();
-    soundOutput = SoundOutput();
+    soundOutput = SoundOutputSFML();
     volume = 1;
     this->playing = true;
 }
 
-Synth::Synth(Sequence sequence, SoundOutput soundOutput) {
+Synth::Synth(Sequence sequence, SoundOutputSFML soundOutput) {
     this->sequence = sequence;
     this->soundOutput = soundOutput;
     volume = 1;
@@ -426,24 +358,10 @@ void Synth::setVolume(double volume) {
 std::mutex mtx;
 void Synth::play() {
     mtx.lock();
-    float buffer[soundOutput.bufferSize];
-    this->sequence.startTime = std::chrono::high_resolution_clock::now();
-    std::vector<float> samples = sequence.playSequenceOnce(soundOutput.sampleRate);
-    // zero pad samples to make sure it is a multiple of bufferSize
-    int numSamples = samples.size();
-    int numZeros = soundOutput.bufferSize - (numSamples % soundOutput.bufferSize);
-    for (int i = 0; i < numZeros; i++) {
-        samples.push_back(0);
-    }
-    //split samples into chunks of size bufferSize and write them to the sound card
-    for (int i = 0; i < samples.size(); i += soundOutput.bufferSize) {
-        for (int j = 0; j < soundOutput.bufferSize; j++) {
-            buffer[j] = samples[i + j];
-        }
-        if (!this->playing) {
-            break;
-        }
-        soundOutput.write(buffer, soundOutput.bufferSize);
+    if (this->playing) {
+        this->sequence.reset();
+        std::vector<float> samples = sequence.playSequenceOnce(soundOutput.sampleRate);
+        soundOutput.play(samples, soundOutput.sampleRate);
     }
     mtx.unlock();
 }
@@ -457,7 +375,7 @@ void Synth::setSequence(Sequence sequence) {
     this->sequence = sequence;
 }
 
-void Synth::setSoundOutput(SoundOutput soundOutput) {
+void Synth::setSoundOutput(SoundOutputSFML soundOutput) {
     this->soundOutput = soundOutput;
 }
 

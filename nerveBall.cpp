@@ -308,7 +308,6 @@ nerveBall::BallNetwork::BallNetwork()
     this->balls = std::vector<Ball*>();
     this->connections = std::vector<Connection*>();
     this->soundOutput = nerveBall::soundOutput;
-    this->soundOutput.open();
     this->synths = std::vector<Synth*>();
     //create some synths
     Note note1 = Note("C3", 0.06, 1);
@@ -697,7 +696,7 @@ int main()
 
     sf::RenderWindow window(sf::VideoMode(800, 600), "Nerve Ball", sf::Style::Close);
     window.setFramerateLimit(60);
-    nerveBall::soundOutput = SoundOutputSFML(44100, 1024, 1);
+    nerveBall::soundOutput = SoundOutputSFML();
     nerveBall::BallNetwork network = nerveBall::BallNetwork();
     nerveBall::Player *player1 = new nerveBall::Player();
     nerveBall::lastScore = 0;

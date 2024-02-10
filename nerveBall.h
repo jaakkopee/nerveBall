@@ -158,7 +158,7 @@ namespace nerveBall
             std::vector<Ball*> balls;
             std::vector<Connection*> connections;
             std::vector<Synth*> synths;
-            SoundOutput soundOutput;
+            SoundOutputSFML soundOutput;
             BallNetwork();
             ~BallNetwork();
             void update();
@@ -206,7 +206,7 @@ namespace nerveBall
     bool gameIsOn;
     bool introIsOn;
     int lastScore;
-    SoundOutput soundOutput;
+    SoundOutputSFML soundOutput;
     void lifeCountThread(Player* player, sf::RenderWindow& window);
     void gameOver();
     double scaleActivation(double activation);
