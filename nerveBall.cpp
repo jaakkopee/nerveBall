@@ -595,7 +595,7 @@ nerveBall::Player::Player()
     this->score = 0;
     this->lives = 5;
     this->font = sf::Font();
-    this->font.loadFromFile("/home/jaakko/Koodit/funk_fonts/shagade.ttf");
+    this->font.loadFromFile("./shagade.ttf");
     this->scoreText = sf::Text("Score: " + std::to_string(this->score), this->font, 20);
     this->scoreText.setPosition(10, 10);
     this->livesText = sf::Text("Time: " + std::to_string(this->lives) + " minutes", this->font, 20);
@@ -736,7 +736,7 @@ int main()
     std::thread audioThread;
     std::thread lifeCount;
     SoundFilePlayer SFPlayer = SoundFilePlayer();
-    SFPlayer.load("/home/jaakko/Koodit/nerveBall/05_rend01.wav");
+    SFPlayer.load("./05_rend01.wav");
     audioThread = std::thread(&SoundFilePlayer::play, &SFPlayer);
     while(window.isOpen())
     {
@@ -824,7 +824,7 @@ int main()
 
             sf::Font font;
 
-            font.loadFromFile("/home/jaakko/Koodit/funk_fonts/shagade.ttf");
+            font.loadFromFile("./shagade.ttf");
             sf::Text introText = sf::Text("Nerve Ball", font, 50);
             introText.setFillColor(textcolor);
             introText.setPosition(400 - introText.getLocalBounds().width/2, text0y);

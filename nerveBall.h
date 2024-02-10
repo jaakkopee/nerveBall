@@ -6,7 +6,6 @@
     * the smallest ball does not divide anymore when clicked, instead it disappears and you get points and play time
 */
 
-#include <alsa/asoundlib.h>
 #include <cmath>
 #include <SFML/Graphics.hpp>
 #include <vector>

@@ -5,7 +5,6 @@
 #include <string>
 #include <iostream>
 #include <cmath>
-#include <alsa/asoundlib.h>
 #include <thread>
 #include <chrono>
 #include <SFML/Audio.hpp>
@@ -67,7 +66,7 @@ class Sequence {
         std::vector<Note> notes;
         std::vector<Oscillator> oscillators;
         int oscIndex;
-        std::chrono::_V2::system_clock::time_point startTime;
+        std::chrono::time_point<std::chrono::system_clock> startTime;
         Sequence();
         Sequence(std::vector<Note> notes);
         ~Sequence();
