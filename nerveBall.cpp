@@ -697,7 +697,7 @@ int main()
 
     sf::RenderWindow window(sf::VideoMode(800, 600), "Nerve Ball", sf::Style::Close);
     window.setFramerateLimit(60);
-    nerveBall::soundOutput.open();
+    nerveBall::soundOutput = SoundOutputSFML(44100, 1024, 1);
     nerveBall::BallNetwork network = nerveBall::BallNetwork();
     nerveBall::Player *player1 = new nerveBall::Player();
     nerveBall::lastScore = 0;
