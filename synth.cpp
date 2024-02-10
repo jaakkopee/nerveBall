@@ -149,7 +149,7 @@ float Sequence::getSample(unsigned int sampleRate){
     // Increment oscIndex and wrap it around if it exceeds the size of oscillators
     oscIndex = (oscIndex + 1) % oscillators.size();
 
-    return applyEnvelope(sample, sampleRate);
+    return sample;
 }
 
 std::vector<float> Sequence::playSequenceOnce(unsigned int sampleRate) {
@@ -190,124 +190,6 @@ std::vector<float> Sequence::playSequenceOnce(unsigned int sampleRate) {
     }
     
     return buffer;
-}
-
-float Sequence::applyEnvelope(float sample, unsigned int sampleRate) {
-    // Calculate the current time in seconds
-    auto currentTime = std::chrono::high_resolution_clock::now();
-    float elapsedTime = std::chrono::duration<float>(currentTime - startTime).count();
-    
-    // Calculate the total duration of the sequence
-    float totalDuration = 0;
-    for (const auto& note : notes) {
-        totalDuration += note.duration;
-    }
-    
-    // Calculate the current note index based on the elapsed time and the note durations
-    noteIndex = 0;
-    float noteStartTime = 0;
-    for (int i = 0; i < notes.size(); i++) {
-        if (elapsedTime >= noteStartTime && elapsedTime < noteStartTime + notes[i].duration) {
-            noteIndex = i;
-            break;
-        }
-        noteStartTime += notes[i].duration;
-    }
-    
-    // Calculate the current note's start time and end time
-    float noteStart = 0;
-    for (int i = 0; i < noteIndex; i++) {
-        noteStart += notes[i].duration;
-    }
-    float noteEnd = noteStart + notes[noteIndex].duration;
-    //initialize envelope variables
-    float attackTime;
-    float decayTime;
-    float sustainTime;
-    float releaseTime;
-    float attackVolume;
-    float decayVolume;
-    float sustainVolume;
-    float releaseVolume;
-
-    if (noteIndex < notes.size()) {
-        // Calculate the current note's attack, decay, sustain, and release times
-        attackTime = notes[noteIndex].duration/10;
-        decayTime = notes[noteIndex].duration/10;
-        sustainTime = notes[noteIndex].duration/2;
-        releaseTime = notes[noteIndex].duration/10;
-        
-        // Calculate the current note's attack, decay, sustain, and release volumes
-        attackVolume = notes[noteIndex].volume;
-        decayVolume = notes[noteIndex].volume/2;
-        sustainVolume = notes[noteIndex].volume/2;
-        releaseVolume = 0;
-    }
-    else {
-        // Calculate the current note's attack, decay, sustain, and release times
-        attackTime = 0;
-        decayTime = 0;
-        sustainTime = 0;
-        releaseTime = 0;
-        
-        // Calculate the current note's attack, decay, sustain, and release volumes
-        attackVolume = 0;
-        decayVolume = 0;
-        sustainVolume = 0;
-        releaseVolume = 0;
-    }
-    
-    // Calculate the current note's attack, decay, sustain, and release start times
-    float attackStart = noteStart;
-    float decayStart = attackStart + attackTime;
-    float sustainStart = decayStart + decayTime;
-    float releaseStart = sustainStart + sustainTime;
-    
-    // Apply the envelope to the sample
-    if (elapsedTime >= attackStart && elapsedTime < decayStart) {
-        sample *= (attackVolume/attackTime)*(elapsedTime - attackStart);
-    }
-    else if (elapsedTime >= decayStart && elapsedTime < sustainStart) {
-        sample *= (decayVolume/decayTime)*(elapsedTime - decayStart) + attackVolume;
-    }
-    else if (elapsedTime >= sustainStart && elapsedTime < releaseStart) {
-        sample *= sustainVolume;
-    }
-    else if (elapsedTime >= releaseStart && elapsedTime < noteEnd) {
-        sample *= (releaseVolume/releaseTime)*(elapsedTime - releaseStart) + sustainVolume;
-    }
-    else {
-        sample = 0;
-    }
-    return sample;
-}
-
-void Sequence::updateSequence() {
-    // Calculate the current time in seconds
-    auto currentTime = std::chrono::high_resolution_clock::now();
-    float elapsedTime = std::chrono::duration<float>(currentTime - startTime).count();
-    
-    // Calculate the total duration of the sequence
-    float totalDuration = 0;
-    for (const auto& note : notes) {
-        totalDuration += note.duration;
-    }
-    
-    // If the sequence has finished playing, reset startTime and noteIndex
-    if (elapsedTime >= totalDuration) {
-        startTime = currentTime;
-        noteIndex = 0;  // Reset noteIndex
-    } else {
-        // Update noteIndex based on elapsedTime
-        float noteStartTime = 0;
-        for (int i = 0; i < notes.size(); i++) {
-            if (elapsedTime >= noteStartTime && elapsedTime < noteStartTime + notes[i].duration) {
-                noteIndex = i;
-                break;
-            }
-            noteStartTime += notes[i].duration;
-        }
-    }
 }
 
 void Sequence::reset() {
