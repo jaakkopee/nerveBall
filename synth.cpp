@@ -357,6 +357,50 @@ void SoundOutput::close() {
     snd_pcm_close(this->handle);
 }
 
+//a sound output class implemented with sfml
+
+SoundOutputSFML::SoundOutputSFML() {
+    sampleRate = 44100;
+    bufferSize = 1024;
+    channels = 1;
+    periodSize = 1024;
+    periodCount = 2;
+    latency = 500000;
+    buffer = sf::SoundBuffer();
+    sound = sf::Sound();
+}
+
+SoundOutputSFML::SoundOutputSFML(int sampleRate, int bufferSize, int channels) {
+    this->sampleRate = sampleRate;
+    this->bufferSize = bufferSize;
+    this->channels = channels;
+    this->periodSize = 1024;
+    this->periodCount = 2;
+    this->latency = 500000;
+    buffer = sf::SoundBuffer();
+    sound = sf::Sound();
+}
+
+void SoundOutputSFML::open() {
+    // Do nothing
+}
+
+void SoundOutputSFML::write(float* buffer, int bufferSize) {
+    // convert float buffer to sf::Int16 buffer
+    sf::Int16* bufferInt16 = new sf::Int16[bufferSize];
+    for (int i = 0; i < bufferSize; i++) {
+        bufferInt16[i] = buffer[i] * 32767;
+    }
+    // Load the buffer with the samples
+    if (!this->buffer.loadFromSamples(bufferInt16, bufferSize, 1, this->sampleRate)) {
+        std::cout << "Error loading sound buffer" << std::endl;
+    }
+}
+
+void SoundOutputSFML::close() {
+    // Do nothing
+}
+
 //a synth class
 
 Synth::Synth() {

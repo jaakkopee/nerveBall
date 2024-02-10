@@ -103,6 +103,19 @@ class SoundOutput {
         void write(float* buffer, int bufferSize);
 };
 
+//a sound output class implemented with sfml
+
+class SoundOutputSFML : public SoundOutput{
+    public:
+        sf::SoundBuffer buffer;
+        sf::Sound sound;
+        SoundOutputSFML();
+        SoundOutputSFML(int sampleRate, int bufferSize, int channels);
+        void open();
+        void close();
+        void write(float* buffer, int bufferSize);
+};
+
 //a synth class
 
 class Synth {
