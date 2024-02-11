@@ -193,7 +193,7 @@ std::vector<float> Sequence::playSequenceOnce(unsigned int sampleRate) {
 }
 
 void Sequence::reset() {
-    startTime = std::chrono::high_resolution_clock::now();
+    startTime = std::chrono::system_clock::now();
 }
 
 //a sound output class implemented with sfml

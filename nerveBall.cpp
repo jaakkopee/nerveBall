@@ -319,7 +319,20 @@ nerveBall::BallNetwork::BallNetwork()
     Note note3 = Note("G3", 0.1, 1);
     Note note3_ = Note("G4", 0.1, 1);
     Note note3__ = Note("C4", 0.1, 1);
-    Sequence sequence1 = Sequence({note1, note1_, note1__, note2, note2_, note2__, note3, note3_, note3__});
+    std::vector<Note> notes;
+    for (int i = 0; i < 100; i++)
+    {
+        notes.push_back(note1);
+        notes.push_back(note1_);
+        notes.push_back(note1__);
+        notes.push_back(note2);
+        notes.push_back(note2_);
+        notes.push_back(note2__);
+        notes.push_back(note3);
+        notes.push_back(note3_);
+        notes.push_back(note3__);
+    }
+    Sequence sequence1 = Sequence(notes);
     Note note4 = Note("E4", 0.1, 1);
     Note note4_ = Note("E5", 0.1, 1);
     Note note4__ = Note("A4", 0.1, 1);
@@ -329,7 +342,20 @@ nerveBall::BallNetwork::BallNetwork()
     Note note6 = Note("B4", 0.1, 1);
     Note note6_ = Note("B5", 0.1, 1);
     Note note6__ = Note("E5", 0.1, 1);
-    Sequence sequence2 = Sequence({note4, note4_, note4__, note5, note5_, note5__, note6, note6_, note6__});
+    std::vector<Note> notes2;
+    for (int i = 0; i < 100; i++)
+    {
+        notes2.push_back(note4);
+        notes2.push_back(note4_);
+        notes2.push_back(note4__);
+        notes2.push_back(note5);
+        notes2.push_back(note5_);
+        notes2.push_back(note5__);
+        notes2.push_back(note6);
+        notes2.push_back(note6_);
+        notes2.push_back(note6__);
+    }
+    Sequence sequence2 = Sequence(notes2);
     Note note7 = Note("G4", 0.1, 1);
     Note note7_ = Note("G5", 0.1, 1);
     Note note7__ = Note("C5", 0.1, 1);
@@ -339,7 +365,20 @@ nerveBall::BallNetwork::BallNetwork()
     Note note9 = Note("D5", 0.1, 1);
     Note note9_ = Note("D6", 0.1, 1);
     Note note9__ = Note("G5", 0.1, 1);
-    Sequence sequence3 = Sequence({note7, note7_, note7__, note8, note8_, note8__, note9, note9_, note9__});
+    std::vector<Note> notes3;
+    for (int i = 0; i < 100; i++)
+    {
+        notes3.push_back(note7);
+        notes3.push_back(note7_);
+        notes3.push_back(note7__);
+        notes3.push_back(note8);
+        notes3.push_back(note8_);
+        notes3.push_back(note8__);
+        notes3.push_back(note9);
+        notes3.push_back(note9_);
+        notes3.push_back(note9__);
+    }
+    Sequence sequence3 = Sequence(notes3);
     Note note10 = Note("B4", 0.1, 1);
     Note note10_ = Note("B5", 0.1, 1);
     Note note10__ = Note("E5", 0.1, 1);
@@ -349,7 +388,20 @@ nerveBall::BallNetwork::BallNetwork()
     Note note12 = Note("F5", 0.1, 1);
     Note note12_ = Note("F6", 0.1, 1);
     Note note12__ = Note("A5", 0.1, 1);
-    Sequence sequence4 = Sequence({note10, note10_, note10__, note11, note11_, note11__, note12, note12_, note12__});
+    std::vector<Note> notes4;
+    for (int i = 0; i < 100; i++)
+    {
+        notes4.push_back(note10);
+        notes4.push_back(note10_);
+        notes4.push_back(note10__);
+        notes4.push_back(note11);
+        notes4.push_back(note11_);
+        notes4.push_back(note11__);
+        notes4.push_back(note12);
+        notes4.push_back(note12_);
+        notes4.push_back(note12__);
+    }
+    Sequence sequence4 = Sequence(notes4);
     Note note13 = Note("D5", 0.1, 1);
     Note note13_ = Note("D6", 0.1, 1);
     Note note13__ = Note("G5", 0.1, 1);
@@ -359,7 +411,20 @@ nerveBall::BallNetwork::BallNetwork()
     Note note15 = Note("A5", 0.1, 1);
     Note note15_ = Note("A6", 0.1, 1);
     Note note15__ = Note("D6", 0.1, 1);
-    Sequence sequence5 = Sequence({note13, note13_, note13__, note14, note14_, note14__, note15, note15_, note15__});
+    std::vector<Note> notes5;
+    for (int i = 0; i < 100; i++)
+    {
+        notes5.push_back(note13);
+        notes5.push_back(note13_);
+        notes5.push_back(note13__);
+        notes5.push_back(note14);
+        notes5.push_back(note14_);
+        notes5.push_back(note14__);
+        notes5.push_back(note15);
+        notes5.push_back(note15_);
+        notes5.push_back(note15__);
+    }
+    Sequence sequence5 = Sequence(notes5);
     this->synths.push_back(new Synth(sequence1, this->soundOutput));
     this->synths.push_back(new Synth(sequence2, this->soundOutput));
     this->synths.push_back(new Synth(sequence3, this->soundOutput));
