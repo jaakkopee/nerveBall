@@ -198,11 +198,9 @@ void SoundOutputSFML::play(std::vector<float> samples, unsigned int sampleRate) 
     }
     buffer.loadFromSamples(&sfSamples[0], samples.size(), 1, sampleRate);
     sound.setBuffer(buffer);
-    sound.play();
     float duration = samples.size()/sampleRate;
     int time = duration*1000;
-    std::this_thread::sleep_for(std::chrono::milliseconds(time));
-    sound.stop();
+    sound.play();
 }
 
 //a synth class
