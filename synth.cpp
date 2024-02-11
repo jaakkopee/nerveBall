@@ -153,41 +153,22 @@ float Sequence::getSample(unsigned int sampleRate){
 }
 
 std::vector<float> Sequence::playSequenceOnce(unsigned int sampleRate) {
-    // Calculate the total duration of the sequence
+    std::vector<float> buffer;
     float totalDuration = 0;
-    for (const auto& note : notes) {
-        totalDuration += note.duration;
-    }
-    
-    // Calculate the total number of samples in the sequence
-    int totalSamples = totalDuration*sampleRate;
-    
-    // Create a buffer to store the samples
-    std::vector<float> buffer(totalSamples);
-    
-    // Initialize the buffer index
-    int bufferIndex = 0;
-    //oscIndex = 0;
-    //reset all oscillators
-    for (int i = 0; i < oscillators.size(); i++) {
-        oscillators[i].setPhase(0);
-        oscillators[i].setAmplitude(0);
-        oscillators[i].setFrequency(0);
-    }
-    // Iterate over each note in the sequence
-    for (const auto& note : notes) {
-        // Calculate the number of samples for this note
-        int noteSamples = note.duration * sampleRate;
 
-        // Set frequency and amplitude of current oscillator
-        oscillators[oscIndex].setFrequency(note.frequency);
-        oscillators[oscIndex].setAmplitude(note.volume);
-
-        // Generate the samples for this note
-        for (int i = 0; i < noteSamples; i++) {
-            buffer[bufferIndex++] = getSample(sampleRate);
+    for (int i = 0; i < notes.size(); i++) {
+        Note note = notes[i];
+        float duration = note.duration;
+        totalDuration += duration;
+        float volume = note.volume;
+        float frequency = note.frequency;
+        for (int j = 0; j < duration*sampleRate; j++) {
+            oscillators[oscIndex].setFrequency(frequency);
+            oscillators[oscIndex].setAmplitude(volume);
+            buffer.push_back(getSample(sampleRate));
         }
     }
+    std::cout << totalDuration << std::endl;    
     
     return buffer;
 }
@@ -200,6 +181,7 @@ void Sequence::reset() {
 
 SoundOutputSFML::SoundOutputSFML() {
     sound = sf::Sound();
+    sound.setLoop(false);
     buffer = sf::SoundBuffer();
     sampleRate = 44100;
 }
@@ -213,6 +195,11 @@ void SoundOutputSFML::play(std::vector<float> samples, unsigned int sampleRate) 
     buffer.loadFromSamples(&sfSamples[0], samples.size(), 1, sampleRate);
     sound.setBuffer(buffer);
     sound.play();
+    float duration = samples.size()/sampleRate;
+    std::cout << duration << std::endl;
+    int intDurationMS = 1000*duration;
+    std::this_thread::sleep_for(std::chrono::milliseconds(intDurationMS));
+    sound.stop();
 }
 
 //a synth class
@@ -237,14 +224,13 @@ Synth::~Synth() {
 void Synth::setVolume(double volume) {
     this->volume = volume;
 }
+
 std::mutex mtx;
 void Synth::play() {
     mtx.lock();
-    if (this->playing) {
-        this->sequence.reset();
-        std::vector<float> samples = sequence.playSequenceOnce(soundOutput.sampleRate);
-        soundOutput.play(samples, soundOutput.sampleRate);
-    }
+    sequence.reset();
+    std::vector<float> samples = sequence.playSequenceOnce(soundOutput.sampleRate);
+    soundOutput.play(samples, soundOutput.sampleRate);
     mtx.unlock();
 }
 
