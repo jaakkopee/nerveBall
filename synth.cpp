@@ -152,10 +152,11 @@ float Sequence::getSample(unsigned int sampleRate){
     return sample;
 }
 
+
 std::vector<float> Sequence::playSequenceOnce(unsigned int sampleRate) {
     std::vector<float> buffer;
     float totalDuration = 0;
-
+    std::cout << notes.size() << std::endl;
     for (int i = 0; i < notes.size(); i++) {
         Note note = notes[i];
         float duration = note.duration;
@@ -170,9 +171,9 @@ std::vector<float> Sequence::playSequenceOnce(unsigned int sampleRate) {
             buffer.push_back(sample);
         }
         totalDuration += duration;
+        std::cout << totalDuration << std::endl;
     }
     std::cout << totalDuration << std::endl;    
-    
     return buffer;
 }
 
@@ -198,8 +199,9 @@ void SoundOutputSFML::play(std::vector<float> samples, unsigned int sampleRate) 
     buffer.loadFromSamples(&sfSamples[0], samples.size(), 1, sampleRate);
     sound.setBuffer(buffer);
     sound.play();
-    int intDurationMS = samples.size()/sampleRate*10;
-    std::this_thread::sleep_for(std::chrono::milliseconds(intDurationMS));
+    float duration = samples.size()/sampleRate;
+    int time = duration*1000;
+    std::this_thread::sleep_for(std::chrono::milliseconds(time));
     sound.stop();
 }
 
@@ -226,13 +228,10 @@ void Synth::setVolume(double volume) {
     this->volume = volume;
 }
 
-std::mutex mtx;
 void Synth::play() {
-    mtx.lock();
     sequence.reset();
     std::vector<float> samples = sequence.playSequenceOnce(soundOutput.sampleRate);
     soundOutput.play(samples, soundOutput.sampleRate);
-    mtx.unlock();
 }
 
 void Synth::stop() {
