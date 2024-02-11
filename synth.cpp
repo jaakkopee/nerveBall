@@ -198,8 +198,6 @@ void SoundOutputSFML::play(std::vector<float> samples, unsigned int sampleRate) 
     }
     buffer.loadFromSamples(&sfSamples[0], samples.size(), 1, sampleRate);
     sound.setBuffer(buffer);
-    float duration = samples.size()/sampleRate;
-    int time = duration*1000;
     sound.play();
 }
 
