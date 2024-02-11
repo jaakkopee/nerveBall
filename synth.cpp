@@ -196,8 +196,8 @@ void SoundOutputSFML::play(std::vector<float> samples, unsigned int sampleRate) 
     sound.setBuffer(buffer);
     sound.play();
     float duration = samples.size()/sampleRate;
-    std::cout << duration << std::endl;
-    int intDurationMS = 1000*duration;
+    int intDurationMS = 10*duration;
+    std::cout << intDurationMS << std::endl;
     std::this_thread::sleep_for(std::chrono::milliseconds(intDurationMS));
     sound.stop();
 }
