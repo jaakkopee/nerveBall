@@ -311,15 +311,15 @@ nerveBall::BallNetwork::BallNetwork()
     this->soundOutput = nerveBall::soundOutput;
     this->synths = std::vector<Synth*>();
     //create some synths
-    Note note1 = Note("C3", 0.1, 1);
-    Note note1_ = Note("C4", 0.1, 1);
-    Note note1__ = Note("F#3", 0.1, 1);
-    Note note2 = Note("E3", 0.1, 1);
-    Note note2_ = Note("E4", 0.1, 1);
-    Note note2__ = Note("A3", 0.1, 1);
-    Note note3 = Note("G3", 0.1, 1);
-    Note note3_ = Note("G4", 0.1, 1);
-    Note note3__ = Note("C4", 0.1, 1);
+    Note note1 = Note("C3", 0.06, 1);
+    Note note1_ = Note("C4", 0.06, 1);
+    Note note1__ = Note("F#3", 0.06, 1);
+    Note note2 = Note("E3", 0.06, 1);
+    Note note2_ = Note("E4", 0.06, 1);
+    Note note2__ = Note("A3", 0.06, 1);
+    Note note3 = Note("G3", 0.06, 1);
+    Note note3_ = Note("G4", 0.06, 1);
+    Note note3__ = Note("C4", 0.06, 1);
     std::vector<Note> notes;
 
     notes.push_back(note1);
@@ -333,15 +333,15 @@ nerveBall::BallNetwork::BallNetwork()
     notes.push_back(note3__);
     Sequence sequence1 = Sequence(notes);
 
-    Note note4 = Note("E4", 0.1, 1);
-    Note note4_ = Note("E5", 0.1, 1);
-    Note note4__ = Note("A4", 0.1, 1);
-    Note note5 = Note("G4", 0.1, 1);
-    Note note5_ = Note("G5", 0.1, 1);
-    Note note5__ = Note("C5", 0.1, 1);
-    Note note6 = Note("B4", 0.1, 1);
-    Note note6_ = Note("B5", 0.1, 1);
-    Note note6__ = Note("E5", 0.1, 1);
+    Note note4 = Note("E4", 0.06, 1);
+    Note note4_ = Note("E5", 0.06, 1);
+    Note note4__ = Note("A4", 0.06, 1);
+    Note note5 = Note("G4", 0.06, 1);
+    Note note5_ = Note("G5", 0.06, 1);
+    Note note5__ = Note("C5", 0.06, 1);
+    Note note6 = Note("B4", 0.06, 1);
+    Note note6_ = Note("B5", 0.06, 1);
+    Note note6__ = Note("E5", 0.06, 1);
     std::vector<Note> notes2;
 
     notes2.push_back(note4);
@@ -355,15 +355,15 @@ nerveBall::BallNetwork::BallNetwork()
     notes2.push_back(note6__);
     
     Sequence sequence2 = Sequence(notes2);
-    Note note7 = Note("G4", 0.1, 1);
-    Note note7_ = Note("G5", 0.1, 1);
-    Note note7__ = Note("C5", 0.1, 1);
-    Note note8 = Note("B4", 0.1, 1);
-    Note note8_ = Note("B5", 0.1, 1);
-    Note note8__ = Note("E5", 0.1, 1);
-    Note note9 = Note("D5", 0.1, 1);
-    Note note9_ = Note("D6", 0.1, 1);
-    Note note9__ = Note("G5", 0.1, 1);
+    Note note7 = Note("G4", 0.06, 1);
+    Note note7_ = Note("G5", 0.06, 1);
+    Note note7__ = Note("C5", 0.06, 1);
+    Note note8 = Note("B4", 0.06, 1);
+    Note note8_ = Note("B5", 0.06, 1);
+    Note note8__ = Note("E5", 0.06, 1);
+    Note note9 = Note("D5", 0.06, 1);
+    Note note9_ = Note("D6", 0.06, 1);
+    Note note9__ = Note("G5", 0.06, 1);
     std::vector<Note> notes3;
 
     notes3.push_back(note7);
@@ -377,15 +377,15 @@ nerveBall::BallNetwork::BallNetwork()
     notes3.push_back(note9__);
 
     Sequence sequence3 = Sequence(notes3);
-    Note note10 = Note("B4", 0.1, 1);
-    Note note10_ = Note("B5", 0.1, 1);
-    Note note10__ = Note("E5", 0.1, 1);
-    Note note11 = Note("D5", 0.1, 1);
-    Note note11_ = Note("D6", 0.1, 1);
-    Note note11__ = Note("G5", 0.1, 1);
-    Note note12 = Note("F5", 0.1, 1);
-    Note note12_ = Note("F6", 0.1, 1);
-    Note note12__ = Note("A5", 0.1, 1);
+    Note note10 = Note("B4", 0.06, 1);
+    Note note10_ = Note("B5", 0.06, 1);
+    Note note10__ = Note("E5", 0.06, 1);
+    Note note11 = Note("D5", 0.06, 1);
+    Note note11_ = Note("D6", 0.06, 1);
+    Note note11__ = Note("G5", 0.06, 1);
+    Note note12 = Note("F5", 0.06, 1);
+    Note note12_ = Note("F6", 0.06, 1);
+    Note note12__ = Note("A5", 0.06, 1);
     std::vector<Note> notes4;
 
     notes4.push_back(note10);
@@ -399,15 +399,15 @@ nerveBall::BallNetwork::BallNetwork()
     notes4.push_back(note12__);
     
     Sequence sequence4 = Sequence(notes4);
-    Note note13 = Note("D5", 0.1, 1);
-    Note note13_ = Note("D6", 0.1, 1);
-    Note note13__ = Note("G5", 0.1, 1);
-    Note note14 = Note("F5", 0.1, 1);
-    Note note14_ = Note("F6", 0.1, 1);
-    Note note14__ = Note("A5", 0.1, 1);
-    Note note15 = Note("A5", 0.1, 1);
-    Note note15_ = Note("A6", 0.1, 1);
-    Note note15__ = Note("D6", 0.1, 1);
+    Note note13 = Note("D5", 0.06, 1);
+    Note note13_ = Note("D6", 0.06, 1);
+    Note note13__ = Note("G5", 0.06, 1);
+    Note note14 = Note("F5", 0.06, 1);
+    Note note14_ = Note("F6", 0.06, 1);
+    Note note14__ = Note("A5", 0.06, 1);
+    Note note15 = Note("A5", 0.06, 1);
+    Note note15_ = Note("A6", 0.06, 1);
+    Note note15__ = Note("D6", 0.06, 1);
     std::vector<Note> notes5;
     
     notes5.push_back(note13);
