@@ -889,17 +889,20 @@ int main()
             sf::Font font;
 
             font.loadFromFile("./shagade.ttf");
-            sf::Text introText = sf::Text("Nerve Ball", font, 50);
+            sf::Text introText = sf::Text("Nerve Ball", font, 60);
             introText.setFillColor(textcolor);
             introText.setPosition(400 - introText.getLocalBounds().width/2, text0y);
+            introText.setScale(1 + 0.1*sin(text0phase), 1 + 0.1*sin(text0phase));
             window.draw(introText);
-            sf::Text introText2 = sf::Text("Nerve Wrecking, ball splitting action!", font, 20);
+            sf::Text introText2 = sf::Text("Nerve Wrecking, ball splitting action!", font, 30);
             introText2.setFillColor(textcolor2);
             introText2.setPosition(400 - introText2.getLocalBounds().width/2, text1y);
+            introText2.setScale(1 + 0.1*sin(text1phase), 1 + 0.1*sin(text1phase));
             window.draw(introText2);
-            sf::Text introText3 = sf::Text("Do my balls get on your nerves?", font, 20);
+            sf::Text introText3 = sf::Text("Do my balls get on your nerves?", font, 30);
             introText3.setFillColor(textcolor3);
             introText3.setPosition(400 - introText3.getLocalBounds().width/2, text2y);
+            introText3.setScale(1 + 0.1*sin(text2phase), 1 + 0.1*sin(text2phase));
             window.draw(introText3);
             window.display();
         }
