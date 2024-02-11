@@ -159,14 +159,17 @@ std::vector<float> Sequence::playSequenceOnce(unsigned int sampleRate) {
     for (int i = 0; i < notes.size(); i++) {
         Note note = notes[i];
         float duration = note.duration;
-        totalDuration += duration;
-        float volume = note.volume;
         float frequency = note.frequency;
-        for (int j = 0; j < duration*sampleRate; j++) {
+        float volume = note.volume;
+        float sample = 0;
+        float sampleDuration = duration*sampleRate;
+        for (int j = 0; j < sampleDuration; j++) {
             oscillators[oscIndex].setFrequency(frequency);
             oscillators[oscIndex].setAmplitude(volume);
-            buffer.push_back(getSample(sampleRate));
+            sample = getSample(sampleRate);
+            buffer.push_back(sample);
         }
+        totalDuration += duration;
     }
     std::cout << totalDuration << std::endl;    
     
@@ -195,9 +198,7 @@ void SoundOutputSFML::play(std::vector<float> samples, unsigned int sampleRate) 
     buffer.loadFromSamples(&sfSamples[0], samples.size(), 1, sampleRate);
     sound.setBuffer(buffer);
     sound.play();
-    float duration = samples.size()/sampleRate;
-    int intDurationMS = 10*duration;
-    std::cout << intDurationMS << std::endl;
+    int intDurationMS = samples.size()/sampleRate*10;
     std::this_thread::sleep_for(std::chrono::milliseconds(intDurationMS));
     sound.stop();
 }
