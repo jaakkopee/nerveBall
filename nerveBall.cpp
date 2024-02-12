@@ -506,7 +506,7 @@ void nerveBall::lifeCountThread(Player* player, sf::RenderWindow& window)
 void nerveBall::Player::updateLifeCount(Player* player, double lives, sf::RenderWindow& window)
 {
     player->setLives(lives);
-    if (player->getLives() == 0)
+    if (player->getLives() <= 0)
     {
         nerveBall::gameOver();
         return;
