@@ -11,7 +11,9 @@ FetchContent_Declare(SFML
     GIT_TAG 2.6.x)
 FetchContent_MakeAvailable(SFML)
 
+## ADD executable and additional sources
 add_executable(nerveBall ./nerveBall.cpp ./synth.cpp)
+
 target_link_libraries(nerveBall PRIVATE sfml-graphics sfml-audio sfml-window sfml-system) 
 target_compile_features(nerveBall PRIVATE cxx_std_17) 
 
