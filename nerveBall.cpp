@@ -922,7 +922,7 @@ int main()
             int totalScore = player1->getScore() - (int)minusScore + (int)timeBonus;
 
             sf::Font font;
-            font.loadFromFile("/home/jaakko/Koodit/funk_fonts/shagade.ttf");
+            font.loadFromFile("./shagade.ttf");
             sf::Text gameOverText = sf::Text("Game Over", font, 50);
             sf::Text scoreText = sf::Text("Score: " + std::to_string(player1->getScore()), font, 30);
             sf::Text minusScoreText = sf::Text("Ball penalty: " + std::to_string((int)minusScore), font, 30);
