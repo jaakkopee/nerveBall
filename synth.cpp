@@ -137,6 +137,7 @@ void Sequence::clear() {
 }
 
 float Sequence::getSample(unsigned int sampleRate){
+    //using multiple oscillators is redundant here, fix it.
     // Only generate a sample from the current oscillator
     float sample = oscillators[oscIndex].getSample(sampleRate);
     //run getSample on all oscillators except the current one
