@@ -20,6 +20,11 @@ add_executable(nerveBall ./nerveBall.cpp ./synth.cpp)
 target_compile_definitions(nerveBall PRIVATE SFML_STATIC)
 
 ## ADD libraries
-target_link_libraries(nerveBall PRIVATE sfml-graphics sfml-audio sfml-window sfml-system X11)
+target_link_libraries(nerveBall PRIVATE sfml-graphics sfml-audio sfml-window sfml-system)
+find_package(X11 REQUIRED)
+target_link_libraries(nerveBall PRIVATE ${X11_LIBRARIES})
+find_package(OpenAL REQUIRED)
+target_link_libraries(nerveBall PRIVATE ${OPENAL_LIBRARY})
+
 
 install(TARGETS nerveBall)
