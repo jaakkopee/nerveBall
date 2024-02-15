@@ -26,5 +26,4 @@ target_link_libraries(nerveBall PRIVATE ${X11_LIBRARIES})
 find_package(OpenAL REQUIRED)
 target_link_libraries(nerveBall PRIVATE ${OPENAL_LIBRARY})
 
-
 install(TARGETS nerveBall)
