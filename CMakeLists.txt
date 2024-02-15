@@ -1,9 +1,13 @@
-cmake_minimum_required(VERSION 3.16)
-project(nerveBall LANGUAGES CXX)
+cmake_minimum_required(VERSION 3.0)
 
-##set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+project(nerveBall)
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/) #output the thing in the same directory as the source
-option(BUILD_SHARED_LIBS "Build shared libraries" ON)
+
+link_directories(${CMAKE_SOURCE_DIR}/lib)
 
 include(FetchContent)
 FetchContent_Declare(SFML
@@ -14,17 +18,10 @@ FetchContent_MakeAvailable(SFML)
 ## ADD executable and additional sources
 add_executable(nerveBall ./nerveBall.cpp ./synth.cpp)
 
-target_link_libraries(nerveBall PRIVATE sfml-graphics sfml-audio sfml-window sfml-system) 
-target_compile_features(nerveBall PRIVATE cxx_std_17) 
+## ADD definitions
+target_compile_definitions(nerveBall PRIVATE SFML_STATIC)
 
-
-## Dunno about this...
-if(WIN32)
-    add_custom_command(
-        TARGET nerveBall
-        COMMENT "Copy OpenAL DLL"
-        PRE_BUILD COMMAND ${CMAKE_COMMAND} -E copy ${SFML_SOURCE_DIR}/extlibs/bin/$<IF:$<EQUAL:${CMAKE_SIZEOF_VOID_P},8>,x64,x86>/openal32.dll $<TARGET_FILE_DIR:nerveBall>
-        VERBATIM)
-endif()
+## ADD libraries
+target_link_libraries(nerveBall PRIVATE sfml-graphics sfml-audio sfml-window sfml-system X11)
 
 install(TARGETS nerveBall)
