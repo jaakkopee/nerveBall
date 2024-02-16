@@ -79,6 +79,7 @@ class Sequence {
         void reset();
         float applyEnvelope(float sample, unsigned int sampleRate);
         int noteIndex;
+        float getDuration();
 };
 
 //a sound output class

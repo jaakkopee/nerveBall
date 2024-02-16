@@ -106,7 +106,10 @@ float Oscillator::getSample(unsigned int sampleRate) {
 
 Sequence::Sequence() {
     notes = {};
-    oscillators = {};
+    for (int i = 0; i < 8; i++) {
+        Oscillator oscillator;
+        oscillators.push_back(oscillator);
+    }
 }
 
 Sequence::Sequence(std::vector<Note> notes) {
@@ -182,6 +185,14 @@ void Sequence::reset() {
     startTime = std::chrono::system_clock::now();
 }
 
+float Sequence::getDuration() {
+    float duration = 0;
+    for (int i = 0; i < notes.size(); i++) {
+        duration += notes[i].duration;
+    }
+    return duration;
+}
+
 //a sound output class implemented with sfml
 
 SoundOutputSFML::SoundOutputSFML() {
@@ -192,6 +203,7 @@ SoundOutputSFML::SoundOutputSFML() {
 }
 
 void SoundOutputSFML::play(std::vector<float> samples, unsigned int sampleRate) {
+    std::cout << "Playing sound (soundOutput)" << std::endl;
     //convert samples to sf::Int16
     std::vector<sf::Int16> sfSamples;
     for (int i = 0; i < samples.size(); i++) {
