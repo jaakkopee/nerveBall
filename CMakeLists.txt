@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.0)
 
-##link_directories($ENV{LD_LIBRARY_PATH}) #???
 project(nerveBall LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD  11)
@@ -20,11 +19,5 @@ target_compile_definitions(nerveBall PRIVATE SFML_STATIC)
 
 ## ADD libraries
 target_link_libraries(nerveBall PRIVATE sfml-graphics sfml-audio sfml-window sfml-system)
-find_package(X11 REQUIRED)
-target_link_libraries(nerveBall PRIVATE ${X11_LIBRARIES})
-find_package(OpenAL REQUIRED)
-target_link_libraries(nerveBall PRIVATE ${OPENAL_LIBRARY})
-find_package(UDev REQUIRED)
-target_link_libraries(nerveBall PRIVATE UDev::UDev)
 
 install(TARGETS nerveBall)
