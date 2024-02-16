@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.0)
 
+##link_directories($ENV{LD_LIBRARY_PATH}) #???
 project(nerveBall LANGUAGES CXX)
 
+set(CMAKE_CXX_STANDARD  11)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/) #output the thing in the same directory as the source
 
 include(FetchContent)
