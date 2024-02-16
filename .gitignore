@@ -3,3 +3,4 @@ scores.txt
 *.o
 build
 .DS_Store
+testSynth
