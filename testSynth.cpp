@@ -59,7 +59,7 @@ int main(int argc, char* argv[]) {
     Sequence slowMelody = Sequence(notes);
     //then a fast melody
     Sequence fastMelody = Sequence(notes2);
-    
+    //then a even faster melody
     Sequence fasterMelody = Sequence(notes3);
 
     // Create a sound output
