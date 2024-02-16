@@ -1,9 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
 
-project(nerveBall)
-
-set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+project(nerveBall LANGUAGES CXX)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/) #output the thing in the same directory as the source
 
@@ -25,5 +22,7 @@ find_package(X11 REQUIRED)
 target_link_libraries(nerveBall PRIVATE ${X11_LIBRARIES})
 find_package(OpenAL REQUIRED)
 target_link_libraries(nerveBall PRIVATE ${OPENAL_LIBRARY})
+find_package(UDev REQUIRED)
+target_link_libraries(nerveBall PRIVATE UDev::UDev)
 
 install(TARGETS nerveBall)
