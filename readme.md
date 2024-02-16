@@ -19,4 +19,4 @@ To build them balls, you need CMAKE.
 $ cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 $ cmake --build build
 ```
-
+Building tested on Debian and macos.
