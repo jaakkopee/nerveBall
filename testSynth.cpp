@@ -1,12 +1,7 @@
 #include "synth.h"
 #include <iostream>
-#include <fstream>
 #include <string>
 #include <vector>
-#include <sstream>
-#include <algorithm>
-#include <iterator>
-#include <cmath>
 #include <thread>
 
 
