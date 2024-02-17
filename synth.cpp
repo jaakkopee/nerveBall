@@ -106,7 +106,9 @@ float Oscillator::getSample(unsigned int sampleRate) {
 
 Sequence::Sequence() {
     notes = {};
-    for (int i = 0; i < 8; i++) {
+    this->oscIndex = 0;
+    this->noteIndex = 0;
+    for (int i = 0; i < 1; i++) {
         Oscillator oscillator;
         oscillators.push_back(oscillator);
     }
@@ -117,7 +119,7 @@ Sequence::Sequence(std::vector<Note> notes) {
     this->oscIndex = 0;
     this->noteIndex = 0;
     // Create 8 oscillators for multitimbral synthesis
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < 1; i++) {
         Oscillator oscillator;
         oscillators.push_back(oscillator);
     }
