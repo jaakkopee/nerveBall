@@ -118,7 +118,6 @@ Sequence::Sequence(std::vector<Note> notes) {
     this->notes = notes;
     this->oscIndex = 0;
     this->noteIndex = 0;
-    // Create 8 oscillators for multitimbral synthesis
     for (int i = 0; i < 1; i++) {
         Oscillator oscillator;
         oscillators.push_back(oscillator);
