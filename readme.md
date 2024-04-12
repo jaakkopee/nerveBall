@@ -23,6 +23,7 @@ Building tested on Debian and macos.
 
 As a sidenote, the movement of the balls is a reminder of the wave/particle-dualism of
 photons. The balls move in two distinct manners: in a straight line and around a circle.
-The straight movement or the speed the ball and the circular movement or the direction of the ball are both modulated by the neural network. Anetwork of balls, to be exact. The ball objects in the game are also neurons in a fully connected network.
+The straight movement or the speed the ball and the circular movement or the direction of the ball are both modulated by the neural network.
+ A network of balls, to be exact. The ball objects in the game are also neurons in a fully connected network.
 If there are 10 balls in the game, you have a real-time oscillating 10 neuron network visualised in front of you
 to interact with.
