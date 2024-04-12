@@ -20,3 +20,7 @@ $ cmake -S . -B build -DCMAKE_BUILD_TYPE=Release
 $ cmake --build build
 ```
 Building tested on Debian and macos.
+
+As a sidenote, the movements of the balls is a reminder of the wave/particle-dualism of
+photons. The balls move in two distinct manners: in a straight line and around a circle.
+The straight movement is deterministic. It increases in time by a constant. The movement speed around the circle (ball's direction) fluctuates. Fluctuation is governed by the neural network.
