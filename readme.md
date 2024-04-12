@@ -21,7 +21,7 @@ $ cmake --build build
 ```
 Building tested on Debian and macos.
 
-As a sidenote, the movement of the balls is a reminder of the wave/particle-dualism of
+As an endnote, the movement of the balls is a reminder of the wave/particle-dualism of
 photons. The balls move in two distinct manners: in a straight line and around a circle.
 The straight movement or the speed the ball and the circular movement or the direction of the ball are both modulated by a neuron simulation.
 The game is a network of balls, to be precise. The ball objects in the game are also neurons in a fully connected network.
